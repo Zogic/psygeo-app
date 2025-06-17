@@ -384,3 +384,25 @@ document.querySelectorAll('.radius-btn').forEach(btn => {
 document.getElementById('radius').addEventListener('input', function() {
   document.querySelectorAll('.radius-btn').forEach(b => b.classList.remove('ring', 'ring-indigo-400', 'border-indigo-400', 'bg-indigo-50'));
 });
+
+const bottomSheet = document.getElementById('bottomSheet');
+const dragHandle = document.getElementById('dragHandle');
+let expanded = false;
+
+dragHandle.addEventListener('click', () => {
+  expanded = !expanded;
+  bottomSheet.classList.toggle('h-[120px]', !expanded);
+  bottomSheet.classList.toggle('h-[80vh]', expanded);
+});
+// Скрываем locateBtn, если любое поле внутри панели в фокусе
+const sheetInputs = document.querySelectorAll('#bottomSheet input, #bottomSheet textarea');
+const locateBtn = document.getElementById('locateBtn');
+
+sheetInputs.forEach(inp => {
+  inp.addEventListener('focus', () => {
+    locateBtn.style.display = 'none';
+  });
+  inp.addEventListener('blur', () => {
+    locateBtn.style.display = '';
+  });
+});

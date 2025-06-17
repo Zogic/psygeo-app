@@ -3,22 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <title>Психогео OpenLayers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
   <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
   <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #map {
+    position: absolute !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+</style>
 
 </head>
-<body>
- <body class="bg-gray-50 min-h-screen">
-  <h1 class="text-3xl font-bold text-center mt-6 mb-4 text-indigo-700">Психогео: генератор точки</h1>
-<div class="max-w-md mx-auto mt-6 p-6 bg-white rounded-xl shadow space-y-5">
 
- 
+<body class="flex flex-col h-screen overflow-hidden">
+  <!-- Карта (на весь экран) -->
+ <div id="map" class="flex-1 relative"></div>
+     <!-- Кнопка "Мое положение" -->
+  <button id="locateBtn"
+    class="absolute top-4 right-4 z-10 bg-white border border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
+    title="Определить мое местоположение">
+    <!-- SVG-иконка (Target/GPS) -->
+    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2m0 16v2m10-10h-2M4 12H2" />
+    </svg>
+  </button>
+  </div>
 
-  <!-- Цель -->
+  <!-- Нижняя панель -->
+  <div id="bottomSheet" class="fixed left-0 right-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-xl max-h-[80vh] transition-all duration-300 h-[120px]">
+    <!-- Язычок для перетаскивания -->
+    <div id="dragHandle" class="w-14 h-2 bg-gray-300 rounded-full mx-auto mt-3 cursor-pointer"></div>
+    <!-- Контент панели -->
+    <div class="content overflow-y-auto px-4 pb-4 max-h-[calc(80vh-40px)]">
+      <!-- Здесь будут форма, кнопки, настройки -->
+     
+        <!-- Цель -->
   <div>
     <label for="purpose" class="block font-semibold text-gray-700 mb-1">Цель</label>
     <div class="text-sm text-gray-500 mt-1">
@@ -56,7 +88,7 @@
   <div>
   <label for="radius" class="block font-semibold text-gray-700 mb-1">Радиус поиска</label>
   <div class="flex items-center gap-3 mb-2">
-    <button type="button" class="radius-btn px-4 py-2 rounded-lg border border-indigo-400 bg-indigo-50 ring ring-indigo-400 text-gray-700 transition" data-value="1">1 км</button>
+  <button type="button" class="radius-btn px-4 py-2 rounded-lg border border-indigo-400 bg-indigo-50 ring ring-indigo-400 text-gray-700 transition" data-value="1">1 км</button>
     <button type="button" class="radius-btn px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-indigo-50 transition" data-value="3">3 км</button>
     <button type="button" class="radius-btn px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-indigo-50 transition" data-value="5">5 км</button>
     <input id="radius" type="number" min="0.1" step="0.1"
@@ -91,26 +123,8 @@
       Создать точку
     </button>
   </div>
-</div>
-
-<!-- Место для вывода результата -->
-<div id="result" class="max-w-md mx-auto my-4"></div>
-
-  <!-- ...далее твоя карта -->
-  <div id="map" class="relative" style="width:100%; height:80vh;">
-  <!-- Кнопка "Мое положение" -->
-  <button id="locateBtn"
-    class="absolute top-4 right-4 z-10 bg-white border border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
-    title="Определить мое местоположение">
-    <!-- SVG-иконка (Target/GPS) -->
-    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
-      viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2m0 16v2m10-10h-2M4 12H2" />
-    </svg>
-  </button>
-</div>
-
-
+    </div>
 </body>
+
+
 </html>
