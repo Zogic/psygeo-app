@@ -6,9 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
   <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="./js/main.js"></script>
+
 <style>
   html, body {
     height: 100%;
@@ -118,12 +119,14 @@
   
   <!-- Кнопка -->
   <div>
-    <button id="createPointBtn" onclick="onCreatePoint()" disabled
+    <button id="createPointBtn"  disabled
       class="w-full bg-indigo-600 text-white rounded-lg py-2 font-semibold text-lg shadow hover:bg-indigo-700 transition disabled:opacity-50">
       Создать точку
-    </button>
+    </button> 
   </div>
-    </div>
+  <div id="result" class="mt-4 px-2"></div>
+</div>
+</div>
 </body>
 
 
