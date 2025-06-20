@@ -149,3 +149,10 @@ export function displayPointOnMap(point, type = 'random') {
 export function getMap() {
   return map;
 }
+
+export function clearRandomPoint() {
+  // ваш vectorSource уже хранит фичи с type==='random'
+  vectorSource.getFeatures()
+    .filter(f => f.get('type') === 'random')
+    .forEach(f => vectorSource.removeFeature(f));
+}

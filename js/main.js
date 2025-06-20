@@ -35,3 +35,5 @@ window.addEventListener('DOMContentLoaded', () => {
   // Настраиваем пользовательский интерфейс (кнопки, форму, панель)
   setupUI();
 });
+
+

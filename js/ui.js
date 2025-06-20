@@ -8,7 +8,8 @@ import {
   addOrMoveUserMarker,
   showCircleOnMap,
   getMap,
-  displayPointOnMap
+  displayPointOnMap, 
+  clearRandomPoint
 } from './map.js';
 import {
   generatePointInRadius,
@@ -25,6 +26,28 @@ import {
 } from './utils.js';
 
 let copyText = '';
+let selectedPointType = 'random';      // как раньше
+let isSummaryMode      = false;        // false = main, true = summary
+const pointTypeLabels = {
+  random:    'Случайная',
+  attractor: 'Аттрактор',
+  void:      'Пустота'
+};
+
+function adjustPanelHeight() {
+  const sheet = document.getElementById('bottomSheet');
+  // снимем Tailwind-классы высоты
+  sheet.classList.remove('h-[120px]', 'h-[80vh]');
+  sheet.style.height    = 'auto';
+  sheet.style.maxHeight = '80vh';
+
+  // мерим содержимое .sheet-view:not([hidden])
+  const active = sheet.querySelector('.sheet-view:not([hidden])');
+  const offset = 40; // высота dragHandle + паддинги
+  const h = active.scrollHeight + offset;
+  const cap = window.innerHeight * 0.8;
+  sheet.style.height = `${Math.min(h, cap)}px`;
+}
 
 // Описания для подсказки по типу точки
 const pointTypeDescriptions = {
@@ -37,6 +60,7 @@ const pointTypeDescriptions = {
  * Настройка всех UI-элементов и событий
  */
 export function setupUI() {
+ 
   // Радиус по умолчанию
   document.getElementById('radius').value = getRadius();
 
@@ -61,37 +85,101 @@ export function setupUI() {
   purposeInput.addEventListener('input', () => validateApiAndPurpose(createBtn, apiWarning));
 
   // Радиус: пресеты и ручной ввод
-  document.querySelectorAll('.radius-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.radius-btn').forEach(b => b.classList.remove('ring', 'ring-indigo-400', 'border-indigo-400', 'bg-indigo-50'));
-      btn.classList.add('ring', 'ring-indigo-400', 'border-indigo-400', 'bg-indigo-50');
-      document.getElementById('radius').value = btn.dataset.value;
-      const coords = getUserCoords();
-      if (coords) showCircleOnMap(coords, getRadius());
+document.querySelectorAll('.radius-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.radius-btn').forEach(b => {
+      // Убираем все стили активной кнопки
+      b.classList.remove(
+        'ring-indigo-400',
+        'border-indigo-400',
+        'bg-indigo-50',
+        // и убираем нейтральные стили, чтобы не конфликтовали
+        'border-gray-300',
+        'bg-white'
+      );
+      // Восстанавливаем дефолтную границу для неактивных
+      b.classList.add('border-gray-300', 'bg-white');
     });
-  });
-  document.getElementById('radius').addEventListener('input', () => {
-    document.querySelectorAll('.radius-btn').forEach(b => b.classList.remove('ring', 'ring-indigo-400', 'border-indigo-400', 'bg-indigo-50'));
+
+    // Настраиваем текущую кнопку как активную
+    btn.classList.remove('border-gray-300', 'bg-white');
+    btn.classList.add(
+      'ring-indigo-400',
+      'border-indigo-400',
+      'bg-indigo-50'
+    );
+
+    // Обновляем радиус и круг на карте
+    document.getElementById('radius').value = btn.dataset.value;
     const coords = getUserCoords();
     if (coords) showCircleOnMap(coords, getRadius());
+    selectedPointType = btn.dataset.value;
   });
+});
 
-  // Тип точки: подсказка
-  document.querySelectorAll('input[name="pointType"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      document.getElementById('pointTypeHelp').innerText = pointTypeDescriptions[radio.value];
-    });
+// При ручном вводе — сбрасываем выделение у кнопок
+document.getElementById('radius').addEventListener('input', () => {
+  document.querySelectorAll('.radius-btn').forEach(b => {
+    b.classList.remove(
+      'ring-indigo-400',
+      'border-indigo-400',
+      'bg-indigo-50'
+    );
+    // возвращаем дефолтный вид
+    b.classList.add('border-gray-300', 'bg-white');
   });
+  const coords = getUserCoords();
+  if (coords) showCircleOnMap(coords, getRadius());
+});
+
+  // при клике на кнопки типа точки
+document.querySelectorAll('.point-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // сбросить активный стиль у всех
+    document.querySelectorAll('.point-btn').forEach(b => {
+      b.classList.remove('ring-indigo-400', 'border-indigo-400', 'bg-indigo-50');
+      b.classList.add('border-gray-300','bg-white');
+    });
+    // выделить текущую
+    btn.classList.add('ring-indigo-400', 'border-indigo-400', 'bg-indigo-50');
+    // убрать серый фон
+    btn.classList.remove('border-gray-300','bg-white');
+    // записать выбор в скрытое поле или прямо в логику
+    const type = btn.dataset.value;
+    // обновить подсказку
+    document.getElementById('pointTypeHelp').innerText = {
+      random: 'Абсолютно случайное место в выбранном радиусе.',
+      attractor: 'Точка, где концентрация случайных чисел максимальна — может “притягивать” внимание.',
+      void: 'Точка, где концентрация минимальна — особая атмосфера “пустоты”.'
+    }[type];
+    // сохранить выбор в переменную, которую используете при генерации
+    selectedPointType = type;
+  });
+});
+
 
   // Нижняя панель: выдвижение
-  const bottomSheet = document.getElementById('bottomSheet');
+ // const bottomSheet = document.getElementById('bottomSheet');
   const dragHandle = document.getElementById('dragHandle');
-  let expanded = false;
-  dragHandle.addEventListener('click', () => {
-    expanded = !expanded;
-    bottomSheet.classList.toggle('h-[120px]', !expanded);
-    bottomSheet.classList.toggle('h-[80vh]', expanded);
-  });
+ dragHandle.addEventListener('click', () => {
+  // если сейчас видим результаты — не даём выдвигать/заводить summary
+  if (!document.getElementById('resultContainer').hidden) return;
+   // перед переключением summary/main, подставим контент
+   if (!isSummaryMode) {
+     // summary mode — отображаем текущие настройки
+     const p = document.getElementById('purpose').value || '—';
+     const r = getRadius().toFixed(1);
+     const t = pointTypeLabels[selectedPointType] || selectedPointType;
+     document.getElementById('summarySnippet').innerText =
+       `Цель: ${p}\nТип точки: ${t}\nРадиус: ${r} км`;
+       
+     showSummary();
+   } else {
+     showMain();
+   }
+   adjustPanelHeight();
+ });
+
 
   // Скрываем кнопку локации при вводе в форму
   const sheetInputs = document.querySelectorAll('#bottomSheet input, #bottomSheet textarea');
@@ -103,6 +191,23 @@ export function setupUI() {
 
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;
+
+  // ОБЯЗАТЕЛЬНО: вешаем один раз, пока кнопка есть в DOM
+  document.getElementById('newPointBtn').addEventListener('click', () => {
+    // 1) Убираем точку с карты
+    clearRandomPoint();
+    // 2) Сбрасываем форму и поле Цель
+   // resetForm();
+    document.getElementById('purpose').value = '';
+    // 3) Показываем форму, скрываем результаты
+    document.getElementById('formContainer').hidden   = false;
+    document.getElementById('resultContainer').hidden = true;
+    // 4) Пересчитываем высоту панели
+    adjustPanelHeight();
+  });
+
+showMain();         // переключить на main-view
+adjustPanelHeight(); // подогнать высоту под содержимое main
 }
 
 /**
@@ -125,12 +230,17 @@ function goToMyLocation() {
  */
 function onCreatePoint() {
   const coords = getUserCoords();
-  if (!coords) return alert('Сначала выбери стартовую точку!');
+  if (!coords) {
+    alert('Сначала выбери стартовую точку!');
+    return;
+  }
 
-  const purpose = document.getElementById('purpose').value || '—';
+  // 1) Собираем входные данные
+  const purpose  = document.getElementById('purpose').value || '—';
   const radiusKm = getRadius();
-  const type = document.querySelector('input[name="pointType"]:checked').value;
+  const type     = selectedPointType; // 'random'|'attractor'|'void'
 
+  // 2) Генерируем точку и рисуем её
   let point, label;
   if (type === 'random') {
     point = generatePointInRadius(coords[1], coords[0], radiusKm);
@@ -138,48 +248,69 @@ function onCreatePoint() {
   } else {
     const pts = generateRandomPointsInRadius(coords[1], coords[0], radiusKm, 120);
     const dens = countNeighbors(pts, 250);
-    if (type === 'attractor') point = findAttractor(pts, dens), label = 'Аттрактор';
-    else point = findVoid(pts, dens), label = 'Пустота';
+    if (type === 'attractor') {
+      point = findAttractor(pts, dens);
+      label = 'Аттрактор';
+    } else {
+      point = findVoid(pts, dens);
+      label = 'Пустота';
+    }
   }
-
-  
-  // Отобразить на карте
   displayPointOnMap(point, type);
 
-  // Формируем текст
+  // 3) Собираем текст результата
   const timestamp = getCurrentTimestamp();
-  copyText = `Цель: ${escapeHtml(purpose)}
-Координаты: ${point.lat.toFixed(6)}, ${point.lon.toFixed(6)}
-Тип точки: ${label}
-Время: ${timestamp}`;
+  copyText = 
+    `Цель: ${escapeHtml(purpose)}\n` +
+    `Координаты: ${point.lat.toFixed(6)}, ${point.lon.toFixed(6)}\n` +
+    `Тип точки: ${label}\n` +
+    `Время: ${timestamp}`;
 
-  // Выводим
+  // 4) Формируем HTML результата
   const yandexUrl = `https://yandex.ru/maps/?pt=${point.lon},${point.lat}&z=15&l=map`;
-  document.getElementById('result').innerHTML = `
+  document.getElementById('resultContent').innerHTML = `
     <div class="bg-indigo-50 rounded-xl p-4 space-y-2 shadow text-gray-800 text-base">
       <div><span class="font-semibold text-gray-600">Цель:</span> ${escapeHtml(purpose)}</div>
       <div><span class="font-semibold text-gray-600">Координаты:</span> ${point.lat.toFixed(6)}, ${point.lon.toFixed(6)}</div>
       <div><span class="font-semibold text-gray-600">Тип точки:</span> ${label}</div>
       <div><span class="font-semibold text-gray-600">Время:</span> ${timestamp}</div>
-      <button onclick="copyResultText()" class="mt-3 bg-indigo-600 text-white rounded-lg py-2 px-4 w-full font-semibold hover:bg-indigo-700 transition">Скопировать</button>
-      <div id="copyFeedback" class="text-green-600 text-center mt-2 hidden"></div>
-      <a href="${yandexUrl}" target="_blank" class="mt-2 block w-full text-center bg-yellow-400 hover:bg-yellow-500 rounded-lg py-2 px-4 font-semibold text-gray-800 transition">Открыть в Яндекс.Картах</a>
+      <button id="copyBtn"
+        class="mt-3 bg-indigo-600 text-white rounded-lg py-2 px-4 w-full font-semibold hover:bg-indigo-700 transition">
+        Скопировать
+      </button>
+      <a href="${yandexUrl}" target="_blank"
+        class="mt-2 block w-full text-center bg-yellow-400 hover:bg-yellow-500 rounded-lg py-2 px-4 font-semibold text-gray-800 transition">
+        Открыть в Яндекс.Картах
+      </a>
     </div>
   `;
 
-  // Сброс формы
-  document.getElementById('purpose').value = '';
-  document.getElementById('createPointBtn').disabled = true;
+  // 5) Скрываем форму и показываем результат
+  document.getElementById('formContainer').hidden   = true;
+  document.getElementById('resultContainer').hidden = false;
+
+  // 6) Навешиваем копирование
+  document.getElementById('copyBtn').onclick = () => {
+    navigator.clipboard.writeText(copyText).then(() => {
+      alert('Текст скопирован!');
+    });
+  };
+
+  
+
 }
 
-/**
- * Копирует результат в буфер и показывает фидбек
- */
-export function copyResultText() {
-  navigator.clipboard.writeText(copyText).then(() => {
-    const fb = document.getElementById('copyFeedback');
-    fb.innerText = 'Текст скопирован!';
-    fb.classList.remove('hidden');
-    setTimeout(() => fb.classList.add('hidden'), 1500);
-  });
+
+function showMain() {
+  isSummaryMode = false;
+  document.querySelector('[data-view="main"]').hidden    = false;
+  document.querySelector('[data-view="summary"]').hidden = true;
+  adjustPanelHeight();  // меряем высоту main-контента
+}
+
+function showSummary() {
+  isSummaryMode = true;
+  document.querySelector('[data-view="main"]').hidden    = true;
+  document.querySelector('[data-view="summary"]').hidden = false;
+  adjustPanelHeight();  // меряем высоту summarySnippet
 }
