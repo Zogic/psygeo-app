@@ -7,7 +7,8 @@ import {
   getUserCoords,
   addOrMoveUserMarker,
   showCircleOnMap,
-  getMap
+  getMap,
+  displayPointOnMap
 } from './map.js';
 import {
   generatePointInRadius,
@@ -141,11 +142,9 @@ function onCreatePoint() {
     else point = findVoid(pts, dens), label = 'Пустота';
   }
 
+  
   // Отобразить на карте
-  showCircleOnMap([coords[0], coords[1]], radiusKm);
-  const map = getMap();
-  map.getView().setCenter(ol.proj.fromLonLat([point.lon, point.lat]));
-  map.getView().setZoom(15);
+  displayPointOnMap(point, type);
 
   // Формируем текст
   const timestamp = getCurrentTimestamp();

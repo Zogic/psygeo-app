@@ -121,6 +121,27 @@ export function showCircleOnMap(coords, radiusKm) {
   vectorSource.addFeature(feature);
 }
 
+export function displayPointOnMap(point, type = 'random') {
+  // Удаляем старые точки этого типа
+  vectorSource.getFeatures()
+    .filter(f => f.get('type') === type)
+    .forEach(f => vectorSource.removeFeature(f));
+
+  const feature = new ol.Feature({
+    geometry: new ol.geom.Point(ol.proj.fromLonLat([point.lon, point.lat])),
+    type: type
+  });
+  const color = type === 'random' ? 'red' : type === 'attractor' ? 'orange' : 'green';
+  feature.setStyle(new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 7,
+      fill: new ol.style.Fill({ color: color }),
+      stroke: new ol.style.Stroke({ color: '#fff', width: 2 })
+    })
+  }));
+  vectorSource.addFeature(feature);
+}
+
 /**
  * Возвращает экземпляр карты (ol.Map).
  * @returns {ol.Map}
