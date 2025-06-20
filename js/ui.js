@@ -170,8 +170,11 @@ document.querySelectorAll('.point-btn').forEach(btn => {
      const p = document.getElementById('purpose').value || '—';
      const r = getRadius().toFixed(1);
      const t = pointTypeLabels[selectedPointType] || selectedPointType;
-     document.getElementById('summarySnippet').innerText =
-       `Цель: ${p}\nТип точки: ${t}\nРадиус: ${r} км`;
+     document.getElementById('summarySnippet').innerHTML = `
+  <div><span class="font-semibold text-gray-600">Цель:</span> ${escapeHtml(p)}</div>
+  <div><span class="font-semibold text-gray-600">Тип точки:</span> ${escapeHtml(t)}</div>
+  <div><span class="font-semibold text-gray-600">Радиус:</span> ${escapeHtml(r)} км</div>
+`;
        
      showSummary();
    } else {
@@ -288,6 +291,7 @@ function onCreatePoint() {
   // 5) Скрываем форму и показываем результат
   document.getElementById('formContainer').hidden   = true;
   document.getElementById('resultContainer').hidden = false;
+   adjustPanelHeight();
 
   // 6) Навешиваем копирование
   document.getElementById('copyBtn').onclick = () => {
