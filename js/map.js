@@ -153,6 +153,6 @@ export function getMap() {
 export function clearRandomPoint() {
   // ваш vectorSource уже хранит фичи с type==='random'
   vectorSource.getFeatures()
-    .filter(f => f.get('type') === 'random')
+    .filter(f => ['random', 'attractor', 'void'].includes(f.get('type')))
     .forEach(f => vectorSource.removeFeature(f));
 }

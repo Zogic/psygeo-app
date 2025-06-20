@@ -34,6 +34,9 @@ const pointTypeLabels = {
   void:      'Пустота'
 };
 
+
+
+
 function adjustPanelHeight() {
   const sheet = document.getElementById('bottomSheet');
   // снимем Tailwind-классы высоты
@@ -48,10 +51,6 @@ function adjustPanelHeight() {
   const cap = window.innerHeight * 0.8;
   sheet.style.height = `${Math.min(h, cap)}px`;
 
-  const locateBtn = document.getElementById('locateBtn');
-  // высота панели от низа экрана — это sheet.style.height без 'px'
-  const panelH    = parseFloat(sheet.style.height);
-  locateBtn.style.bottom = `${panelH + 10}px`;
 }
 
 // Описания для подсказки по типу точки
@@ -189,13 +188,7 @@ document.querySelectorAll('.point-btn').forEach(btn => {
  });
 
 
-  // Скрываем кнопку локации при вводе в форму
-  const sheetInputs = document.querySelectorAll('#bottomSheet input, #bottomSheet textarea');
-  const locateBtn = document.getElementById('locateBtn');
-  sheetInputs.forEach(inp => {
-    inp.addEventListener('focus', () => locateBtn.style.display = 'none');
-    inp.addEventListener('blur', () => locateBtn.style.display = '');
-  });
+ 
 
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;

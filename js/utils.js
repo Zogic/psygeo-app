@@ -42,13 +42,8 @@ export function getCurrentTimestamp() {
  */
 export function validateApiAndPurpose(btn, warning) {
   const api = document.getElementById("apiKey").value.trim();
-  const purpose = document.getElementById("purpose").value.trim();
   if (api !== "12345") {
     btn.disabled = true;
-    warning.style.display = "block";
-  } else if (purpose === "") {
-    btn.disabled = true;
-    warning.style.display = "none";
   } else {
     btn.disabled = false;
     warning.style.display = "none";
