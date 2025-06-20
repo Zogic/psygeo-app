@@ -34,6 +34,20 @@ const pointTypeLabels = {
   void:      'Пустота'
 };
 
+const apiInput       = document.getElementById('apiKey');
+const toggleBtn      = document.getElementById('toggleApiVisibility');
+const iconEye        = document.getElementById('iconEye');
+
+feather.replace();  // превратит все <i data-feather> в SVG
+
+toggleBtn.addEventListener('click', () => {
+  const isHidden = apiInput.type === 'password';
+  apiInput.type  = isHidden ? 'text' : 'password';
+
+  // Меняем иконку
+  toggleBtn.innerHTML = `<i data-feather="${isHidden ? 'eye-off' : 'eye'}" class="w-5 h-5"></i>`;
+  feather.replace();  // инициализируем новую иконку
+});
 
 
 
@@ -187,8 +201,6 @@ document.querySelectorAll('.point-btn').forEach(btn => {
    adjustPanelHeight();
  });
 
-
- 
 
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;
