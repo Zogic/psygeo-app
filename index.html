@@ -14,22 +14,23 @@
 
 <body class="relative h-screen overflow-hidden">
   <!-- Карта (на весь экран) -->
-  <div id="map" class="absolute inset-0 z-0">
-    <!-- Кнопка "Моё положение" -->
-    <button id="locateBtn"
-      class="absolute top-4 right-4 z-10 bg-white border border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
-      title="Определить моё местоположение">
-      <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2m0 16v2m10-10h-2M4 12H2" />
-      </svg>
-    </button>
+  <div id="map" class="fixed inset-0 z-0"></div>
   </div>
 
   <!-- Нижняя панель -->
   <div id="bottomSheet" class="fixed left-0 right-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-xl max-h-[80vh] transition-all duration-300">
     <!-- Язычок -->
     <div id="dragHandle" class="w-14 h-2 bg-gray-300 rounded-full mx-auto mt-3 cursor-pointer"></div>
+
+    <!-- Кнопка "Моё положение" -->
+    <button id="locateBtn"
+      class="absolute right-4 bottom-[calc(100%+10px)] z-10 bg-white border border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
+      title="Определить моё местоположение">
+      <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2m0 16v2m10-10h-2M4 12H2" />
+      </svg>
+    </button>
 
     <!-- 1) Форма настроек -->
     <div id="formContainer" class="sheet-view" data-view="main">
@@ -110,7 +111,7 @@
     </div>
 
     <!-- 2) Результат генерации -->
-    <div id="resultContainer" class="sheet-view px-4 pb-4" data-view="result" hidden>
+    <div id="resultContainer" class="sheet-view px-4 pt-4 pb-4 space-y-4" data-view="result" hidden>
       <div id="resultContent"></div>
       <button id="newPointBtn"
         class="mt-4 w-full bg-indigo-600 text-white rounded-lg py-2 font-semibold hover:bg-indigo-700 transition">

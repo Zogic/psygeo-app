@@ -47,6 +47,11 @@ function adjustPanelHeight() {
   const h = active.scrollHeight + offset;
   const cap = window.innerHeight * 0.8;
   sheet.style.height = `${Math.min(h, cap)}px`;
+
+  const locateBtn = document.getElementById('locateBtn');
+  // высота панели от низа экрана — это sheet.style.height без 'px'
+  const panelH    = parseFloat(sheet.style.height);
+  locateBtn.style.bottom = `${panelH + 10}px`;
 }
 
 // Описания для подсказки по типу точки
@@ -205,6 +210,7 @@ document.querySelectorAll('.point-btn').forEach(btn => {
     // 3) Показываем форму, скрываем результаты
     document.getElementById('formContainer').hidden   = false;
     document.getElementById('resultContainer').hidden = true;
+    document.getElementById('dragHandle').hidden = false;
     // 4) Пересчитываем высоту панели
     adjustPanelHeight();
   });
@@ -291,6 +297,7 @@ function onCreatePoint() {
   // 5) Скрываем форму и показываем результат
   document.getElementById('formContainer').hidden   = true;
   document.getElementById('resultContainer').hidden = false;
+   document.getElementById('dragHandle').hidden = true;
    adjustPanelHeight();
 
   // 6) Навешиваем копирование
