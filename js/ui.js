@@ -52,19 +52,36 @@ toggleBtn.addEventListener('click', () => {
 
 
 function adjustPanelHeight() {
-  const sheet = document.getElementById('bottomSheet');
-  // снимем Tailwind-классы высоты
-  sheet.classList.remove('h-[120px]', 'h-[80vh]');
-  sheet.style.height    = 'auto';
-  sheet.style.maxHeight = '80vh';
+  const sheet  = document.getElementById('bottomSheet');
+  const main   = sheet.querySelector('[data-view="main"]');
+  // summary или result — что сейчас не скрыто
+  const detail = sheet.querySelector('[data-view="summary"]:not([hidden])')
+              || sheet.querySelector('[data-view="result"]:not([hidden])');
 
-  // мерим содержимое .sheet-view:not([hidden])
-  const active = sheet.querySelector('.sheet-view:not([hidden])');
-  const offset = 40; // высота dragHandle + паддинги
-  const h = active.scrollHeight + offset;
-  const cap = window.innerHeight * 0.8;
-  sheet.style.height = `${Math.min(h, cap)}px`;
+  const offset = 40; // ваш dragHandle + padding
+  // сколько нужно для полной формы
+  maxHeight = main.scrollHeight + offset;
+  // сколько нужно для summary/result
+  minHeight = detail.scrollHeight + offset;
 
+  // ограничиваем общий max-height
+  sheet.style.maxHeight = `${window.innerHeight * 0.8}px`;
+  // ставим текущую высоту согласно режиму
+  sheet.style.height = `${isSummaryMode ? minHeight : maxHeight}px`;
+}
+
+// настройка Summary
+function updateSummarySnippet() {
+  const p = document.getElementById('purpose').value || '—';
+  const r = getRadius().toFixed(1);
+  const btn = document.querySelector(`.point-btn[data-value="${selectedPointType}"]`);
+  const t   = btn ? btn.textContent.trim() : selectedPointType;
+
+  document.getElementById('summarySnippet').innerHTML = `
+    <div><span class="font-semibold">Цель:</span> ${escapeHtml(p)}</div>
+    <div><span class="font-semibold">Тип точки:</span> ${escapeHtml(t)}</div>
+    <div><span class="font-semibold">Радиус:</span> ${escapeHtml(r)} км</div>
+  `;
 }
 
 // Описания для подсказки по типу точки
@@ -184,16 +201,7 @@ document.querySelectorAll('.point-btn').forEach(btn => {
   if (!document.getElementById('resultContainer').hidden) return;
    // перед переключением summary/main, подставим контент
    if (!isSummaryMode) {
-     // summary mode — отображаем текущие настройки
-     const p = document.getElementById('purpose').value || '—';
-     const r = getRadius().toFixed(1);
-     const t = pointTypeLabels[selectedPointType] || selectedPointType;
-     document.getElementById('summarySnippet').innerHTML = `
-  <div><span class="font-semibold text-gray-600">Цель:</span> ${escapeHtml(p)}</div>
-  <div><span class="font-semibold text-gray-600">Тип точки:</span> ${escapeHtml(t)}</div>
-  <div><span class="font-semibold text-gray-600">Радиус:</span> ${escapeHtml(r)} км</div>
-`;
-       
+     updateSummarySnippet();
      showSummary();
    } else {
      showMain();
