@@ -36,17 +36,21 @@ const pointTypeLabels = {
 
 const apiInput       = document.getElementById('apiKey');
 const toggleBtn      = document.getElementById('toggleApiVisibility');
-const iconEye        = document.getElementById('iconEye');
-
-feather.replace();  // превратит все <i data-feather> в SVG
+const toggleIcon= document.getElementById('toggleIcon');
 
 toggleBtn.addEventListener('click', () => {
   const isHidden = apiInput.type === 'password';
   apiInput.type  = isHidden ? 'text' : 'password';
 
-  // Меняем иконку
-  toggleBtn.innerHTML = `<i data-feather="${isHidden ? 'eye-off' : 'eye'}" class="w-5 h-5"></i>`;
-  feather.replace();  // инициализируем новую иконку
+  if (isHidden) {
+    // показываем «закрытый» глаз
+    toggleIcon.classList.remove('fi-ss-eye');
+    toggleIcon.classList.add('fi-ss-eye-crossed');
+  } else {
+    // возвращаем «открытый» глаз
+    toggleIcon.classList.remove('fi-ss-eye-crossed');
+    toggleIcon.classList.add('fi-ss-eye');
+  }
 });
 
 
@@ -338,3 +342,49 @@ function showSummary() {
   document.querySelector('[data-view="summary"]').hidden = false;
   adjustPanelHeight();  // меряем высоту summarySnippet
 }
+
+// 1) Словарь подсказок
+const infoContent = {
+  purpose: {
+    title: 'Цель психогео-прогулки',
+    text:  'Опишите намерение или вопрос, который будете исследовать на прогулке: слово, фразу или идею, отражающую ваше внутреннее состояние или запрос.'
+  },
+  pointType: {
+    title: 'Тип точки',
+    text:  'Выберите:\n' +
+           '- Случайная: полностью рандомная локация;\n' +
+           '- Аттрактор: зона повышенной «интенсивности» событий;\n' +
+           '- Пустота: места с малой «концентрацией» событий.'
+  },
+  apiKey: {
+    title: 'API-ключ ANU Quantum Numbers',
+    text:  'Для получения квантовых чисел нужен личный ключ. ' +
+           'Если у вас его нет, перейдите на ' +
+           '<a href="https://quantumnumbers.anu.edu.au/" target="_blank" class="text-indigo-600 underline">ANU Quantum Numbers</a> и получите ключ в личном кабинете.'
+  }
+};
+
+// 2) Обработчик клика по «i»
+document.querySelectorAll('.info-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.info;
+    const info = infoContent[key];
+    if (!info) return;
+
+    document.getElementById('infoTitle').innerText = info.title;
+    // Можно вставлять HTML-ссылки:
+    document.getElementById('infoText').innerHTML = info.text;
+
+    document.getElementById('infoOverlay').classList.remove('hidden');
+  });
+});
+
+// 3) Закрытие по кресту или клику вне модалки
+document.getElementById('infoClose').addEventListener('click', () => {
+  document.getElementById('infoOverlay').classList.add('hidden');
+});
+document.getElementById('infoOverlay').addEventListener('click', (evt) => {
+  if (evt.target === evt.currentTarget) {
+    document.getElementById('infoOverlay').classList.add('hidden');
+  }
+});
