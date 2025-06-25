@@ -6,12 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1" />
   <!-- OpenLayers CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
   <!-- Ваши стили (если есть) -->
   <link rel="stylesheet" href="style.css" />
   <!-- <script src="https://unpkg.com/feather-icons"></script> -->
   <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+  <!-- Google Fonts: Onest -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap"
+  rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
 <body class="relative h-screen overflow-hidden">
@@ -20,9 +27,19 @@
   </div>
 
   <!-- Нижняя панель -->
-  <div id="bottomSheet" class="fixed left-0 right-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-xl max-h-[80vh] transition-all duration-300">
+  <div
+  id="bottomSheet"
+  class="
+    fixed inset-x-0 bottom-0 z-50
+    bg-[#0F0F0F]/[0.9]
+    backdrop-blur-sm
+    rounded-t-2xl
+    max-h-[80vh]
+    transition-all duration-300
+    overflow-hidden
+  ">
     <!-- Язычок -->
-    <div id="dragHandle" class="w-14 h-2 bg-gray-300 rounded-full mx-auto mt-3 cursor-pointer"></div>
+    <div id="dragHandle" class="w-14 h-2 bg-[var(--hint-color)] rounded-full mx-auto mt-2 mb-2 cursor-pointer"></div>
 
     <!-- Кнопка "Моё положение" -->
 <button id="locateBtn"
@@ -47,46 +64,100 @@
        
         <!-- Цель -->
         <div class="relative">
-          <label for="purpose" class="block font-semibold text-gray-700 mb-1 flex items-center">
+          <label for="purpose"
+       class="flex items-center mb-3">
+  <!-- Текст с фиксированным line-height -->
+  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
     Цель
-    <button type="button" class="ml-1 info-btn text-blue-500 " data-info="purpose" title="Подробнее про Цель">
-      <!-- небольшая иконка i -->
-      <i class="fi fi-ss-interrogation"></i>
-    </button>
-  </label>
+  </span>
+
+  <!-- Кнопка-иконка -->
+  <button
+    type="button"
+    class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
+    data-info="purpose"
+    title="Подробнее про Цель"
+  >
+    <!-- Задаём иконке четкий размер -->
+    <i class="fi fi-ss-interrogation w-4 h-4"></i>
+  </button>
+</label>
+
          
-          <input id="purpose" type="text" placeholder="Опиши намерение..."
-            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 outline-none transition" />
+          <input
+  id="purpose"
+  type="text"
+  placeholder="Опиши намерение…"
+  class="
+    w-full
+    bg-transparent                             /* убираем белый фон */
+    border border-[var(--text-color)]        /* цвет рамки по умолчанию */
+    rounded-md
+    px-3 py-2
+    text-[var(--text-color)]                   /* цвет вводимого текста */
+    text-base
+    placeholder:text-[var(--hint-color)]      /* цвет плейсхолдера */
+    focus:outline-none
+    focus:ring-2 focus:ring-[var(--current-color)]  /* кольцо фокуса */
+    focus:border-[var(--text-color)]            /* рамка при фокусе */
+    transition
+  "
+/>
         </div>
 
         <!-- Тип точки -->
         <div class="relative">
-          <label class="block font-semibold text-gray-700 mb-1 flex items-center">
+          <label for="purpose"
+       class="flex items-center mb-3">
+  <!-- Текст с фиксированным line-height -->
+  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
     Тип точки
-    <button type="button" class="ml-1 info-btn text-blue-500" data-info="pointType" title="Подробнее про Тип точки">
-      <i class="fi fi-ss-interrogation"></i>
-    </button>
-  </label>
-          <div class="flex gap-3 mb-2">
-            <button type="button" data-value="random"
-              class="point-btn px-4 py-2 rounded-lg border border-indigo-400 bg-indigo-50 text-gray-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-0">
-              Случайная
-            </button>
-            <button type="button" data-value="attractor"
-              class="point-btn px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-0">
-              Аттрактор
-            </button>
-            <button type="button" data-value="void"
-              class="point-btn px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-0">
-              Пустота
-            </button>
-          </div>
+  </span>
 
-        </div>
+  <!-- Кнопка-иконка -->
+  <button
+    type="button"
+    class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
+    data-info="pointType"
+    title="Подробнее про типы точек"
+  >
+    <!-- Задаём иконке четкий размер -->
+    <i class="fi fi-ss-interrogation w-4 h-4"></i>
+  </button>
+</label>
+         <div class="flex gap-3 mb-2">
+  <button
+    type="button"
+    data-value="random"
+    class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent 
+           text-[var(--text-color)]"
+  >Случайная</button>
+
+  <button
+    type="button"
+    data-value="attractor"
+    class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent 
+           text-[var(--text-color)]"
+  >Аттрактор</button>
+
+  <button
+    type="button"
+    data-value="void"
+    class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent 
+           text-[var(--text-color)]"
+  >Пустота</button>
+          </div>
+</div>
 
         <!-- Радиус -->
         <div>
-          <label for="radius" class="block font-semibold text-gray-700 mb-1">Радиус поиска</label>
+          <label for="radius"
+       class="flex items-center mb-3">
+  <!-- Текст с фиксированным line-height -->
+  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
+    Радиус поиска
+  </span>
+</label>
           <div class="flex items-center gap-3 mb-2">
             <button type="button" data-value="1"
               class="radius-btn px-4 py-2 rounded-lg border border-indigo-400 bg-indigo-50 text-gray-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-0">

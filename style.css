@@ -1,3 +1,26 @@
-body { font-family: sans-serif; margin: 0;
+body {  font-family: 'Onest', sans-serif; margin: 0;
 }
 #map { width: 100%; height: 100%; }
+:root {
+  --color-white:#F7F7FF;
+  --color-black:#0F0F0F;
+  --color-blue:#66C7F4;
+  --color-purple:#9A6EEA;
+  --color-lime:#F0F600;
+  --color-red: #F9564F;
+  --color-dark-grey: #5C5C5C;
+  --color-light-grey: #898989;
+  /*кнопки*/
+  --random-button-select: var(--color-lime);
+  --attractor-button-select: var(--color-red);
+  --void-button-select: var(--color-purple);
+  --random-button-hover: #F0F60040;
+  --attractor-button-hover: #F9564F40;
+  --void-button-hover: #9A6EEA40;
+    /*токены*/
+  --text-color: var(--color-white);
+  --current-color: var(--random-button-select);
+  --hint-color: var(--color-light-grey);
+  --selector-color: var(--color-dark-grey);
+}
+@import "tailwindcss"

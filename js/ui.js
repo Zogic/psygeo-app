@@ -25,6 +25,8 @@ import {
   validateApiAndPurpose
 } from './utils.js';
 
+
+
 let copyText = '';
 let selectedPointType = 'random';      // как раньше
 let isSummaryMode      = false;        // false = main, true = summary
@@ -34,6 +36,7 @@ const pointTypeLabels = {
   void:      'Пустота'
 };
 
+//API visibility
 const apiInput       = document.getElementById('apiKey');
 const toggleBtn      = document.getElementById('toggleApiVisibility');
 const toggleIcon= document.getElementById('toggleIcon');
@@ -54,7 +57,7 @@ toggleBtn.addEventListener('click', () => {
 });
 
 
-
+//Обновление размеров bottomSheet
 function adjustPanelHeight() {
   const sheet  = document.getElementById('bottomSheet');
   const main   = sheet.querySelector('[data-view="main"]');
@@ -88,12 +91,6 @@ function updateSummarySnippet() {
   `;
 }
 
-// Описания для подсказки по типу точки
-const pointTypeDescriptions = {
-  random: 'Абсолютно случайное место в выбранном радиусе.',
-  attractor: 'Точка, где концентрация случайных чисел максимальна — психогеографы считают, что такие места могут "притягивать" внимание.',
-  void: 'Точка, где концентрация случайных чисел минимальна — иногда такие места связаны с особой атмосферой пустоты или редкости событий.'
-};
 
 /**
  * Настройка всех UI-элементов и событий
@@ -171,33 +168,76 @@ document.getElementById('radius').addEventListener('input', () => {
   if (coords) showCircleOnMap(coords, getRadius());
 });
 
-  // при клике на кнопки типа точки
-document.querySelectorAll('.point-btn').forEach(btn => {
+
+// ПЕРЕКЛЮЧЕНИЕ КНОПОК "ТИП ТОЧКИ"
+// 1) Определяем соответствия для hover- и select-классов
+const POINT_HOVER_CLASSES = {
+  random:    'hover:bg-[var(--random-button-hover)]',
+  attractor: 'hover:bg-[var(--attractor-button-hover)]',
+  void:      'hover:bg-[var(--void-button-hover)]'
+};
+
+const POINT_SELECT_CLASSES = {
+  random:    ['bg-[var(--random-button-select)]',    'border-[var(--random-button-select)]'],
+  attractor: ['bg-[var(--attractor-button-select)]', 'border-[var(--attractor-button-select)]'],
+  void:      ['bg-[var(--void-button-select)]',      'border-[var(--void-button-select)]']
+};
+
+const btns = document.querySelectorAll('.point-btn');
+
+btns.forEach(btn => {
+  // Навешиваем hover-классы сразу, если нужно:
+  const hoverClass = `hover:bg-[var(--${btn.dataset.value}-button-hover)]`;
+  btn.classList.add(hoverClass);
+
   btn.addEventListener('click', () => {
-    // сбросить активный стиль у всех
-    document.querySelectorAll('.point-btn').forEach(b => {
-      b.classList.remove('ring-indigo-400', 'border-indigo-400', 'bg-indigo-50');
-      b.classList.add('border-gray-300','bg-white');
+    // Считаем type именно здесь, а не вне
+    const type = btn.dataset.value;  // 'random', 'attractor' или 'void'
+
+    // 1) Сброс состояния у всех
+    btns.forEach(b => {
+      const t = b.dataset.value;
+      // убираем select-классы
+      POINT_SELECT_CLASSES[t].forEach(c => b.classList.remove(c));
+      // восстанавливаем hover
+      b.classList.add(POINT_HOVER_CLASSES[t]);
+      // сбрасываем текст
+      b.classList.remove('text-black');
+      b.classList.add('text-[var(--text-color)]');
+      // убираем тень
+      b.classList.remove('shadow-md', 'shadow-lg');
     });
-    // выделить текущую
-    btn.classList.add('ring-indigo-400', 'border-indigo-400', 'bg-indigo-50');
-    // убрать серый фон
-    btn.classList.remove('border-gray-300','bg-white');
-    // записать выбор в скрытое поле или прямо в логику
-    const type = btn.dataset.value;
-    // обновить подсказку
-    document.getElementById('pointTypeHelp').innerText = {
-      random: 'Абсолютно случайное место в выбранном радиусе.',
-      attractor: 'Точка, где концентрация случайных чисел максимальна — может “притягивать” внимание.',
-      void: 'Точка, где концентрация минимальна — особая атмосфера “пустоты”.'
-    }[type];
-    // сохранить выбор в переменную, которую используете при генерации
+
+    // 2) Выделяем кликнутую
+    // убираем её hover
+    btn.classList.remove(POINT_HOVER_CLASSES[type]);
+    // ставим фон/границу
+    btn.classList.add(...POINT_SELECT_CLASSES[type]);
+    // чёрный текст
+    btn.classList.remove('text-[var(--text-color)]');
+    btn.classList.add('text-black');
+    // тень
+    btn.classList.add('shadow-md');
+
+    // **ВАЖНО**: сохраняем в глобальную переменную
     selectedPointType = type;
+
+    // 3) обновляем текущий цвет UI
+    const selColor = getComputedStyle(document.documentElement)
+                        .getPropertyValue(`--${type}-button-select`)
+                        .trim();
+    document.documentElement.style.setProperty('--current-color', selColor);
   });
 });
 
+// Инициализируем дефолтный выбор, чтобы всё выставилось сразу
+document.querySelector('.point-btn[data-value="random"]').click();
 
-  // Нижняя панель: выдвижение
+
+
+
+
+// Нижняя панель: выдвижение
  // const bottomSheet = document.getElementById('bottomSheet');
   const dragHandle = document.getElementById('dragHandle');
  dragHandle.addEventListener('click', () => {
@@ -217,7 +257,7 @@ document.querySelectorAll('.point-btn').forEach(btn => {
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;
 
-  // ОБЯЗАТЕЛЬНО: вешаем один раз, пока кнопка есть в DOM
+  // Кнопка "Новая генерация"
   document.getElementById('newPointBtn').addEventListener('click', () => {
     // 1) Убираем точку с карты
     clearRandomPoint();
