@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
   <!-- Ваши стили (если есть) -->
   <link rel="stylesheet" href="style.css" />
-  <!-- <script src="https://unpkg.com/feather-icons"></script> -->
   <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
   <!-- Google Fonts: Onest -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,16 +44,13 @@
 <!-- Кнопка "Моё положение" -->
 <button id="locateBtn"
       class="absolute right-4 bottom-[calc(100%+10px)] z-10  bg-[#0F0F0F]/[0.9]
-    backdrop-blur-sm border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
+    backdrop-blur-sm shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
       title="Определить моё местоположение">
-      <span class="text-[var(--current-color)]">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       viewBox="0 0 24 24"
-       class="w-6 h-6 fill-current">
-    <!-- fill="currentColor" говорит: брать цвет из CSS color -->
-    <path fill="currentColor"
-          d="M21.949,11c-.471-4.717-4.232-8.479-8.949-8.949V0h-2V2.051C6.283,2.521,2.521,6.283,2.051,11H0v2H2.051c.471,4.717,4.232,8.479,8.949,8.949v2.051h2v-2.051c4.717-.471,8.479-4.232,8.949-8.949h2.051v-2h-2.051Zm-9.949,6c-2.757,0-5-2.243-5-5s2.243-5,5-5,5,2.243,5,5-2.243,5-5,5Zm3-5c0,1.654-1.346,3-3,3s-3-1.346-3-3,1.346-3,3-3,3,1.346,3,3Z"/>
-  </svg>
+     <span
+  class="inline-flex items-center justify-center w-6 h-6 text-[var(--current-color)] text-2xl"
+>
+  <!-- Flaticon-иконка, размер и цвет наследуются от родителя -->
+  <i class="fi fi-ss-location-crosshairs w-6 h-6"></i>
 </span>
     </button>
     
@@ -175,7 +171,7 @@
     inputmode="decimal"
     pattern="^\\d+([.,]\\d+)?$"
     placeholder="Свой км"
-    class="w-24 ml-3 border rounded-lg px-3 py-2 bg-transparent                             /* убираем белый фон */
+    class="w-24 ml-3 border rounded-lg px-4 py-2 bg-transparent                             /* убираем белый фон */
     border border-[var(--text-color)]        /* цвет рамки по умолчанию */
     rounded-md
     px-3 py-2
@@ -243,7 +239,7 @@
         <!-- Кнопка Создать точку -->
         <div>
           <button id="createPointBtn" disabled
-            class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-semibold text-lg shadow hover:bg-[var(--current-color)] transition disabled:opacity-50">
+            class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-semibold text-lg shadow hover:opacity-85 transition disabled:opacity-20">
             Создать точку
           </button>
         </div>
@@ -257,15 +253,41 @@
     <div id="resultContainer" class="sheet-view px-4 pt-4 pb-4 space-y-4" data-view="result" hidden>
       <div id="resultContent"></div>
       <button id="newPointBtn"
-        class="mt-4 w-full bg-indigo-600 text-white rounded-lg py-2 font-semibold hover:bg-indigo-700 transition">
+       class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-semibold text-lg shadow hover:opacity-85 transition disabled:opacity-20">
         Новая генерация
       </button>
     </div>
 
     <!-- 3) Сводка (summary) -->
-<div id="summaryContainer" class="sheet-view px-4 py-4" data-view="summary" hidden>
-  <div id="summarySnippet"
-       class="bg-indigo-50 rounded-xl p-4 space-y-2 shadow text-gray-800 text-base">
+<div id="summaryContainer" class="sheet-view px-4 " data-view="summary" hidden>
+  <div id="summarySnippet">
+    <div class="mb-2">
+    <!-- Блок Цель -->
+    <span class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1">
+      Цель
+    </span>
+    <span id="summaryPurpose" class="font-medium text-base text-[var(--text-color)]">
+    </span>
+  </div>
+  <!-- Блок Тип точки и Радиус рядом -->
+  <div class="flex gap-6">
+    <!-- Тип точки -->
+    <div>
+      <span class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1">
+        Тип точки
+      </span>
+      <span id="summaryType" class="font-medium text-base text-[var(--current-color)]">
+      </span>
+    </div>
+    <!-- Радиус -->
+    <div>
+      <span class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1">
+        Радиус поиска
+      </span>
+      <span id="summaryRadius" class="font-medium text-base text-[var(--text-color)]">
+      </span>
+    </div>
+  </div>
   </div>
 </div>
   </div>

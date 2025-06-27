@@ -52,10 +52,7 @@ export function updateSummarySnippet() {
   const r = getRadius().toFixed(1);
   const btn = document.querySelector(`.point-btn[data-value="${state.selectedPointType}"]`);
   const t   = btn ? btn.textContent.trim() : state.selectedPointType;
-
-  document.getElementById('summarySnippet').innerHTML = `
-    <div><span class="font-semibold">Цель:</span> ${escapeHtml(p)}</div>
-    <div><span class="font-semibold">Тип точки:</span> ${escapeHtml(t)}</div>
-    <div><span class="font-semibold">Радиус:</span> ${escapeHtml(r)} км</div>
-  `;
+  document.getElementById('summaryPurpose').textContent = p;
+  document.getElementById('summaryType')   .textContent = t;
+  document.getElementById('summaryRadius') .textContent = `${r} км`;
 }

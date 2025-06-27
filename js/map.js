@@ -71,7 +71,7 @@ export function addOrMoveUserMarker(coords) {
   feature.setStyle(new ol.style.Style({
     image: new ol.style.Circle({
       radius: 8,
-      fill: new ol.style.Fill({ color: 'blue' }),
+      fill: new ol.style.Fill({ color: 'rgba(15,15,15,0.9)' }),
       stroke: new ol.style.Stroke({ color: '#fff', width: 2 })
     })
   }));
