@@ -24,7 +24,7 @@
 <body class="relative h-screen overflow-hidden">
   <!-- Карта (на весь экран) -->
   <div id="map" class="fixed inset-0 z-0"></div>
-  </div>
+  
 
   
   <!-- Нижняя панель -->
@@ -37,7 +37,6 @@
     rounded-t-2xl
     max-h-[80vh]
     transition-all duration-300
-    overflow-hidden
   ">
   
     <!-- Язычок -->
@@ -45,9 +44,10 @@
 
 <!-- Кнопка "Моё положение" -->
 <button id="locateBtn"
-      class="absolute right-4 bottom-[calc(100%+10px)] z-10 bg-white border border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
+      class="absolute right-4 bottom-[calc(100%+10px)] z-10  bg-[#0F0F0F]/[0.9]
+    backdrop-blur-sm border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
       title="Определить моё местоположение">
-      <span class="text-indigo-600">
+      <span class="text-[var(--current-color)]">
   <svg xmlns="http://www.w3.org/2000/svg"
        viewBox="0 0 24 24"
        class="w-6 h-6 fill-current">
@@ -250,18 +250,7 @@
       </div>
     </div>
 
-    <!-- инфо-поп-ап -->
- <div id="infoOverlay" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-70">
-  <div id="infoModal"
-       class="bg-white rounded-lg shadow-xl max-w-md w-11/12 p-4 relative flex flex-col space-y-4">
-    <button id="infoClose"
-      class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-      <i class="fi fi-ss-cross"></i>
-    </button>
-    <h2 id="infoTitle" class="text-lg font-semibold mb-2"></h2>
-    <p id="infoText" class="text-gray-700"></p>
-  </div>
-</div>
+   
 
 
     <!-- 2) Результат генерации -->
@@ -286,4 +275,17 @@
   <!-- OpenLayers JS -->
   <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
 </body>
+
+ <!-- инфо-поп-ап -->
+ <div id="infoOverlay" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-70">
+  <div id="infoModal"
+       class="bg-white rounded-lg shadow-xl max-w-md w-11/12 p-4 relative flex flex-col space-y-4">
+    <button id="infoClose"
+      class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+      <i class="fi fi-ss-cross"></i>
+    </button>
+    <h2 id="infoTitle" class="text-lg font-semibold mb-2"></h2>
+    <p id="infoText" class="text-gray-700"></p>
+  </div>
+</div>
 </html>
