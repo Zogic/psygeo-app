@@ -1,3 +1,4 @@
+console.log('[load] utils');
 // js/utils.js
 // Вспомогательные функции для проекта
 
@@ -46,6 +47,5 @@ export function validateApiAndPurpose(btn, warning) {
     btn.disabled = true;
   } else {
     btn.disabled = false;
-    warning.style.display = "none";
   }
 }

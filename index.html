@@ -26,6 +26,7 @@
   <div id="map" class="fixed inset-0 z-0"></div>
   </div>
 
+  
   <!-- Нижняя панель -->
   <div
   id="bottomSheet"
@@ -38,10 +39,11 @@
     transition-all duration-300
     overflow-hidden
   ">
+  
     <!-- Язычок -->
     <div id="dragHandle" class="w-14 h-2 bg-[var(--hint-color)] rounded-full mx-auto mt-2 mb-2 cursor-pointer"></div>
 
-    <!-- Кнопка "Моё положение" -->
+<!-- Кнопка "Моё положение" -->
 <button id="locateBtn"
       class="absolute right-4 bottom-[calc(100%+10px)] z-10 bg-white border border-gray-300 shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
       title="Определить моё местоположение">
@@ -55,8 +57,7 @@
   </svg>
 </span>
     </button>
-
-
+    
     <!-- 1) Форма настроек -->
     <div id="formContainer" class="sheet-view" data-view="main">
       <div class="content overflow-y-auto px-4 pb-4 max-h-[calc(80vh-10px)] space-y-4">

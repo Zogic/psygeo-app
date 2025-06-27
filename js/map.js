@@ -1,3 +1,5 @@
+
+console.log('[load] map.js');
 // js/map.js
 // Управление картой, маркерами и кругами через OpenLayers, экспорт функций для использования из main.js и ui.js
 
@@ -20,6 +22,7 @@ let view;
  * @returns {ol.Map} - объект карты
  */
 export function initMap(targetId = 'map') {
+  console.log('[map] Init ');
   view = new ol.View({
     center: ol.proj.fromLonLat(DEFAULT_COORDS),
     zoom: 14
@@ -29,8 +32,10 @@ export function initMap(targetId = 'map') {
     layers: [rasterLayer, vectorLayer],
     view: view
   });
-  return map;
+  return map; 
 }
+
+initMap();
 
 /**
  * Устанавливает текущие координаты пользователя.
@@ -147,6 +152,7 @@ export function displayPointOnMap(point, type = 'random') {
  * @returns {ol.Map}
  */
 export function getMap() {
+  console.log('[map] getMap() called →', map);
   return map;
 }
 
