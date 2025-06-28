@@ -42,6 +42,10 @@ import {
   onCreatePoint,
 } from './point_creation.js';
 
+import {
+  createResult,
+} from './results.js';
+
 import { state } from '../state.js';
 
 state.isSummaryMode = false;        // false = main, true = summary
@@ -75,14 +79,18 @@ export function showMain() {
   state.isSummaryMode = false;
   document.querySelector('[data-view="main"]').hidden    = false;
   document.querySelector('[data-view="summary"]').hidden = true;
+  document.querySelector('[data-view="result"]').hidden = true;
+  document.getElementById('dragHandle').hidden = false;
   adjustPanelHeight();  // меряем высоту main-контента
 }
+
 
 export function showSummary() {
   state.isSummaryMode = true;
   document.querySelector('[data-view="main"]').hidden    = true;
   document.querySelector('[data-view="summary"]').hidden = false;
   document.querySelector('[data-view="result"]').hidden = true;
+  document.getElementById('dragHandle').hidden = false;
   adjustPanelHeight();  // меряем высоту summarySnippet
 }
 
@@ -91,6 +99,7 @@ export function showResult() {
   document.querySelector('[data-view="main"]').hidden    = true;
   document.querySelector('[data-view="summary"]').hidden = true;
   document.querySelector('[data-view="result"]').hidden = false;
+  document.getElementById('dragHandle').hidden = true;
   adjustPanelHeight();  // меряем высоту summarySnippet
 }
 

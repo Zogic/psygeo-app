@@ -54,10 +54,12 @@
 </span>
     </button>
     
+
+    
     <!-- 1) Форма настроек -->
     <div id="formContainer" class="sheet-view" data-view="main">
       <div class="content overflow-y-auto px-4 pb-4 max-h-[calc(80vh-10px)] space-y-4">
-       
+      
        
         <!-- Цель -->
         <div class="relative">
@@ -239,7 +241,7 @@
         <!-- Кнопка Создать точку -->
         <div>
           <button id="createPointBtn" disabled
-            class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-semibold text-lg shadow hover:opacity-85 transition disabled:opacity-20">
+            class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition disabled:opacity-20">
             Создать точку
           </button>
         </div>
@@ -249,14 +251,97 @@
    
 
 
-    <!-- 2) Результат генерации -->
-    <div id="resultContainer" class="sheet-view px-4 pt-4 pb-4 space-y-4" data-view="result" hidden>
-      <div id="resultContent"></div>
-      <button id="newPointBtn"
-       class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-semibold text-lg shadow hover:opacity-85 transition disabled:opacity-20">
+<!-- 4) Сводка (results) -->
+<div
+  id="resultContainer"
+  class="sheet-view px-4 mt-4"
+  data-view="result"
+  hidden
+>
+  <div id="resultContent">
+    <div class="mb-6">
+      <!-- Блок Цель -->
+      <div class="mb-2">
+        <span
+          class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+        >
+          Цель
+        </span>
+        <span
+          id="resultPurpose"
+          class="font-medium text-base text-[var(--text-color)]"
+        ></span>
+      </div>
+
+      <!-- Блок Координаты -->
+      <div class="mb-2">
+        <span
+          class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+        >
+          Координаты
+        </span>
+        <span
+          id="resultCoordinates"
+          class="font-medium text-base text-[var(--text-color)]"
+        ></span>
+      </div>
+
+      <!-- Тип точки и Время в одну линию -->
+      <div class="flex gap-6">
+        <!-- Тип точки -->
+        <div>
+          <span
+            class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+          >
+            Тип точки
+          </span>
+          <span
+            id="resultType"
+            class="font-medium text-base text-[var(--current-color)]"
+          ></span>
+        </div>
+        <!-- Время -->
+        <div>
+          <span
+            class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+          >
+            Время
+          </span>
+          <span
+            id="resultTime"
+            class="font-medium text-base text-[var(--text-color)]"
+          ></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопка новая генерация -->
+    <div class="mb-3">
+    <a
+        id="openMapBtn"
+        class="w-full block text-center bg-[var(--color-dark-grey)] text-white rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition"
+        target="_blank"
+        rel="noopener"
+      >
+        Открыть в картах
+      </a>
+    </div>
+
+    <!-- Ссылка открыть в Яндекс.Картах -->
+    <div>
+        <button
+        id="newPointBtn"
+        class="w-full bg-[var(--current-color)] text-black rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition disabled:opacity-20"
+      >
         Новая генерация
       </button>
+      
     </div>
+  </div>
+</div>
+
+
+            
 
     <!-- 3) Сводка (summary) -->
 <div id="summaryContainer" class="sheet-view px-4 " data-view="summary" hidden>
@@ -311,3 +396,5 @@
   </div>
 </div>
 </html>
+
+

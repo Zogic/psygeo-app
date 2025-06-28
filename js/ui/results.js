@@ -46,16 +46,27 @@ import {
 } from './point_creation.js';
 
 
+export function createResult({ purpose, point, label }) {
+  // 1) Собираем текстовые данные
+  const timestamp = getCurrentTimestamp();
+  const coordsText = `${point.lat.toFixed(6)}, ${point.lon.toFixed(6)}`;
+  const yandexUrl = `https://yandex.ru/maps/?pt=${point.lon},${point.lat}&z=15&l=map`;
 
+  // 2) Подставляем в DOM
+  document.getElementById('resultPurpose').textContent      = purpose;
+  document.getElementById('resultCoordinates').textContent  = coordsText;
+  document.getElementById('resultType').textContent         = label;
+  document.getElementById('resultTime').textContent         = timestamp;
 
-  // Кнопка "Новая генерация"
-  document.getElementById('resultContainer').addEventListener('click', e => {
-  if (e.target.id === 'newPointBtn') {
+  const openMapBtn = document.getElementById('openMapBtn');
+  openMapBtn.href = yandexUrl;
+}
+
+// Кнопка "Новая генерация"
+export function newSetup(){
     clearRandomPoint();
     document.getElementById('purpose').value = '';
-    formContainer.hidden   = false;
-    resultContainer.hidden = true;
-    dragHandle.hidden      = false;
-    showMain();
-  }
-});
+    showMain(); console.log('On new generation adjust');
+}
+  
+  
