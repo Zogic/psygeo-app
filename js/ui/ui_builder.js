@@ -46,6 +46,8 @@ import {
   onCreatePoint,
 } from './point_creation.js';
 
+import{newSetup,} from './results.js'
+
 
 
 export function setupUI() {
@@ -60,12 +62,16 @@ export function setupUI() {
   const apiInput = document.getElementById('apiKey');
   const purposeInput = document.getElementById('purpose');
   const createBtn = document.getElementById('createPointBtn');
+  const newPointBtn = document.getElementById('newPointBtn');
   const apiWarning = document.getElementById('apiWarning');
   apiInput.addEventListener('input', () => validateApiAndPurpose(createBtn, apiWarning));
   purposeInput.addEventListener('input', () => validateApiAndPurpose(createBtn, apiWarning));
 
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;
+
+  // Кнопка создания новой точки
+  newPointBtn.onclick = newSetup;
 
 
 
