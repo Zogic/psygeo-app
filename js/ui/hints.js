@@ -1,5 +1,4 @@
-console.log('[load] hints.js');
-
+console.log("[load] hints.js");
 
 import {
   DEFAULT_COORDS,
@@ -8,88 +7,76 @@ import {
   addOrMoveUserMarker,
   showCircleOnMap,
   getMap,
-  displayPointOnMap, 
-  clearRandomPoint
-} from '../map.js';
+  displayPointOnMap,
+  clearRandomPoint,
+} from "../map.js";
 import {
   generatePointInRadius,
   generateRandomPointsInRadius,
   countNeighbors,
   findAttractor,
-  findVoid
-} from '../generator.js';
+  findVoid,
+} from "../generator.js";
 import {
   getRadius,
   escapeHtml,
   getCurrentTimestamp,
-  validateApiAndPurpose
-} from '../utils.js';
+  validateApiAndPurpose,
+} from "../utils.js";
 
 import {
   adjustPanelHeight,
   showMain,
   showSummary,
-} from './bottomSheet_controls.js';
+} from "./bottomSheet_controls.js";
 
-import {
-  goToMyLocation,
-} from './map_controls.js';
+import { goToMyLocation } from "./map_controls.js";
 
-import {
-  updateRadiusButtonStyles,
-} from './radius_select.js';
+import { updateRadiusButtonStyles } from "./radius_select.js";
 
-import {
-  updateSummarySnippet,
-} from './summary.js';
+import { updateSummarySnippet } from "./summary.js";
 
-import {
-  onCreatePoint,
-} from './point_creation.js';
+import { onCreatePoint } from "./point_creation.js";
 
+// 1) Навешиваем общий клик на все кнопки (i)
+document.querySelectorAll(".info-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.info; // "purpose" / "pointType" / "apiKey"
+    const template = document.getElementById(`tmpl-${key}`);
+    if (!template) return; // шаблона нет — выходим
 
-// 1) Словарь подсказок
-const infoContent = {
-  purpose: {
-    title: 'Цель психогео-прогулки',
-    text:  'Опишите намерение или вопрос, который будете исследовать на прогулке: слово, фразу или идею, отражающую ваше внутреннее состояние или запрос.'
-  },
-  pointType: {
-    title: 'Тип точки',
-    text:  'Выберите:\n' +
-           '- Случайная: полностью рандомная локация;\n' +
-           '- Аттрактор: зона повышенной «интенсивности» событий;\n' +
-           '- Пустота: места с малой «концентрацией» событий.'
-  },
-  apiKey: {
-    title: 'API-ключ ANU Quantum Numbers',
-    text:  'Для получения квантовых чисел нужен личный ключ. ' +
-           'Если у вас его нет, перейдите на ' +
-           '<a href="https://quantumnumbers.anu.edu.au/" target="_blank" class="text-indigo-600 underline">ANU Quantum Numbers</a> и получите ключ в личном кабинете.'
-  }
-};
+    const overlay = document.getElementById("infoOverlay");
+    const modal = document.getElementById("infoModal");
 
-// 2) Обработчик клика по «i»
-document.querySelectorAll('.info-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const key = btn.dataset.info;
-    const info = infoContent[key];
-    if (!info) return;
+    // 2) Удаляем предыдущий контент (всё кроме кнопки закрытия)
+    modal
+      .querySelectorAll(":scope > .template-content")
+      .forEach((el) => el.remove());
 
-    document.getElementById('infoTitle').innerText = info.title;
-    // Можно вставлять HTML-ссылки:
-    document.getElementById('infoText').innerHTML = info.text;
+    // 3) Клонируем нужный <template>
+    const clone = template.content.cloneNode(true);
 
-    document.getElementById('infoOverlay').classList.remove('hidden');
+    // 4) Оборачиваем его, чтобы потом легко чистить снова
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("template-content");
+    wrapper.appendChild(clone);
+
+    // 5) Вставляем внутрь модалки после кнопки закрытия
+    modal.appendChild(wrapper);
+
+    // 6) Показываем оверлей
+    overlay.classList.remove("hidden");
   });
 });
 
-// 3) Закрытие по кресту или клику вне модалки
-document.getElementById('infoClose').addEventListener('click', () => {
-  document.getElementById('infoOverlay').classList.add('hidden');
+// 7) Закрытие: по крестику
+document.getElementById("infoClose").addEventListener("click", () => {
+  document.getElementById("infoOverlay").classList.add("hidden");
 });
-document.getElementById('infoOverlay').addEventListener('click', (evt) => {
+
+// 8) Закрытие: кликом по пустому фону
+document.getElementById("infoOverlay").addEventListener("click", (evt) => {
   if (evt.target === evt.currentTarget) {
-    document.getElementById('infoOverlay').classList.add('hidden');
+    document.getElementById("infoOverlay").classList.add("hidden");
   }
 });

@@ -1,400 +1,482 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>Психогео OpenLayers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1" />
-  <!-- OpenLayers CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
-  <!-- Ваши стили (если есть) -->
-  <link rel="stylesheet" href="style.css" />
-  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
-  <!-- Google Fonts: Onest -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-  href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap"
-  rel="stylesheet">
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Психогео OpenLayers</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1"
+    />
+    <!-- OpenLayers CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css"
+    />
+    <!-- Ваши стили (если есть) -->
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css"
+    />
+    <!-- Google Fonts: Onest -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
 
-</head>
+  <body class="relative h-screen overflow-hidden">
+    <!-- Карта (на весь экран) -->
+    <div id="map" class="fixed inset-0 z-0"></div>
 
-<body class="relative h-screen overflow-hidden">
-  <!-- Карта (на весь экран) -->
-  <div id="map" class="fixed inset-0 z-0"></div>
-  
+    <!-- Нижняя панель -->
+    <div
+      id="bottomSheet"
+      class="fixed inset-x-0 bottom-0 z-50 bg-[#0F0F0F]/[0.9] backdrop-blur-sm rounded-t-2xl max-h-[80vh] transition-all duration-300"
+    >
+      <!-- Язычок -->
+      <div
+        id="dragHandle"
+        class="w-14 h-2 bg-[var(--hint-color)] rounded-full mx-auto mt-2 mb-2 cursor-pointer"
+      ></div>
 
-  
-  <!-- Нижняя панель -->
-  <div
-  id="bottomSheet"
-  class="
-    fixed inset-x-0 bottom-0 z-50
-    bg-[#0F0F0F]/[0.9]
-    backdrop-blur-sm
-    rounded-t-2xl
-    max-h-[80vh]
-    transition-all duration-300
-  ">
-  
-    <!-- Язычок -->
-    <div id="dragHandle" class="w-14 h-2 bg-[var(--hint-color)] rounded-full mx-auto mt-2 mb-2 cursor-pointer"></div>
-
-<!-- Кнопка "Моё положение" -->
-<button id="locateBtn"
-      class="absolute right-4 bottom-[calc(100%+10px)] z-10  bg-[#0F0F0F]/[0.9]
-    backdrop-blur-sm shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
-      title="Определить моё местоположение">
-     <span
-  class="inline-flex items-center justify-center w-6 h-6 text-[var(--current-color)] text-2xl"
->
-  <!-- Flaticon-иконка, размер и цвет наследуются от родителя -->
-  <i class="fi fi-ss-location-crosshairs w-6 h-6"></i>
-</span>
-    </button>
-    
-
-    
-    <!-- 1) Форма настроек -->
-    <div id="formContainer" class="sheet-view" data-view="main">
-      <div class="content overflow-y-auto px-4 pb-4 max-h-[calc(80vh-10px)] space-y-4">
-      
-       
-        <!-- Цель -->
-        <div class="relative">
-          <label for="purpose"
-       class="flex items-center mb-3">
-  <!-- Текст с фиксированным line-height -->
-  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
-    Цель
-  </span>
-
-  <!-- Кнопка-иконка -->
-  <button
-    type="button"
-    class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
-    data-info="purpose"
-    title="Подробнее про Цель"
-  >
-    <!-- Задаём иконке четкий размер -->
-    <i class="fi fi-ss-interrogation w-4 h-4"></i>
-  </button>
-</label>
-
-         
-          <input
-  id="purpose"
-  type="text"
-  placeholder="Опиши намерение…"
-  class="
-    w-full
-    bg-transparent                             /* убираем белый фон */
-    border border-[var(--text-color)]        /* цвет рамки по умолчанию */
-    rounded-md
-    px-3 py-2
-    text-[var(--text-color)]                   /* цвет вводимого текста */
-    text-base
-    placeholder:text-[var(--hint-color)]      /* цвет плейсхолдера */
-    focus:outline-none
-    focus:ring-2 focus:ring-[var(--current-color)]  /* кольцо фокуса */
-    focus:border-[var(--text-color)]            /* рамка при фокусе */
-    transition
-  "
-/>
-        </div>
-
-        <!-- Тип точки -->
-        <div class="relative">
-          <label for="purpose"
-       class="flex items-center mb-3">
-  <!-- Текст с фиксированным line-height -->
-  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
-    Тип точки
-  </span>
-
-  <!-- Кнопка-иконка -->
-  <button
-    type="button"
-    class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)] "
-    data-info="pointType"
-    title="Подробнее про типы точек"
-  >
-    <!-- Задаём иконке четкий размер -->
-    <i class="fi fi-ss-interrogation w-4 h-4"></i>
-  </button>
-</label>
-         <div class="flex gap-3 mb-2">
-  <button
-    type="button"
-    data-value="random"
-    class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
-  >Случайная</button>
-
-  <button
-    type="button"
-    data-value="attractor"
-    class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
-  >Аттрактор</button>
-
-  <button
-    type="button"
-    data-value="void"
-    class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
-  >Пустота</button>
-          </div>
-</div>
-
-        <!-- Радиус -->
-        <div>
-          <label for="radius"
-       class="flex items-center mb-3">
-  <!-- Текст с фиксированным line-height -->
-  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
-    Радиус поиска
-  </span>
-</label>
-          <div class="flex items-center gap-3 mb-2">
-            <button type="button" data-value="1"
-              class="radius-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition">
-              1 км
-            </button>
-            <button type="button" data-value="3"
-              class="radius-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition">
-              3 км
-            </button>
-            <button type="button" data-value="5"
-              class="radius-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition">
-              5 км
-            </button>
-            <input
-    id="radius"
-    type="text"
-    inputmode="decimal"
-    pattern="^\\d+([.,]\\d+)?$"
-    placeholder="Свой км"
-    class="w-24 ml-3 border rounded-lg px-4 py-2 bg-transparent                             /* убираем белый фон */
-    border border-[var(--text-color)]        /* цвет рамки по умолчанию */
-    rounded-md
-    px-3 py-2
-    text-[var(--text-color)]                   /* цвет вводимого текста */
-    text-base
-    placeholder:text-[var(--hint-color)]      /* цвет плейсхолдера */
-    focus:outline-none
-    focus:ring-2 focus:ring-[var(--current-color)]  /* кольцо фокуса */
-    focus:border-[var(--text-color)]            /* рамка при фокусе */
-    transition"
-/>
-          </div>
-        </div>
-
-        <!-- API -->
-        <div class="relative">
-          <label for="apiKey"
-       class="flex items-center mb-3">
-  <!-- Текст с фиксированным line-height -->
-  <span class="font-bold text-xl text-[var(--text-color)] leading-tight">
-    API
-  </span>
-
-  <!-- Кнопка-иконка -->
-  <button
-    type="button"
-    class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
-    data-info="apiKey"
-    title="Подробнее про API"
-  >
-    <!-- Задаём иконке четкий размер -->
-    <i class="fi fi-ss-interrogation w-4 h-4"></i>
-  </button>
-</label>
-          
-         <div class="relative w-full">
-  <input
-    id="apiKey"
-    type="password"
-    inputmode="decimal"
-    placeholder="Введите API ключ..."
-    class="
-    w-full
-    bg-transparent                             /* убираем белый фон */
-    border border-[var(--text-color)]        /* цвет рамки по умолчанию */
-    rounded-md
-    px-3 py-2
-    text-[var(--text-color)]                   /* цвет вводимого текста */
-    text-base
-    placeholder:text-[var(--hint-color)]      /* цвет плейсхолдера */
-    focus:outline-none
-    focus:ring-2 focus:ring-[var(--current-color)]  /* кольцо фокуса */
-    focus:border-[var(--text-color)]            /* рамка при фокусе */
-    transition
-  "
-  />
-  <button id="toggleApiVisibility" type="button"
-          class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-          tabindex="-1">
-    <i id="toggleIcon" class="fi fi-ss-eye w-5 h-5"></i>
-  </button>
-</div>
-</div>
-
-        <!-- Кнопка Создать точку -->
-        <div>
-          <button id="createPointBtn" disabled
-            class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition disabled:opacity-20">
-            Создать точку
-          </button>
-        </div>
-      </div>
-    </div>
-
-   
-
-
-<!-- 4) Сводка (results) -->
-<div
-  id="resultContainer"
-  class="sheet-view px-4 mt-4"
-  data-view="result"
-  hidden
->
-  <div id="resultContent">
-    <div class="mb-6">
-      <!-- Блок Цель -->
-      <div class="mb-2">
-        <span
-          class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
-        >
-          Цель
-        </span>
-        <span
-          id="resultPurpose"
-          class="font-medium text-base text-[var(--text-color)]"
-        ></span>
-      </div>
-
-      <!-- Блок Координаты -->
-      <div class="mb-2">
-        <span
-          class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
-        >
-          Координаты
-        </span>
-        <span
-          id="resultCoordinates"
-          class="font-medium text-base text-[var(--text-color)]"
-        ></span>
-      </div>
-
-      <!-- Тип точки и Время в одну линию -->
-      <div class="flex gap-6">
-        <!-- Тип точки -->
-        <div>
-          <span
-            class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
-          >
-            Тип точки
-          </span>
-          <span
-            id="resultType"
-            class="font-medium text-base text-[var(--current-color)]"
-          ></span>
-        </div>
-        <!-- Время -->
-        <div>
-          <span
-            class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
-          >
-            Время
-          </span>
-          <span
-            id="resultTime"
-            class="font-medium text-base text-[var(--text-color)]"
-          ></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Кнопка новая генерация -->
-    <div class="mb-3">
-    <a
-        id="openMapBtn"
-        class="w-full block text-center bg-[var(--color-dark-grey)] text-white rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition"
-        target="_blank"
-        rel="noopener"
+      <!-- Кнопка "Моё положение" -->
+      <button
+        id="locateBtn"
+        class="absolute right-4 bottom-[calc(100%+10px)] z-10 bg-[#0F0F0F]/[0.9] backdrop-blur-sm shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
+        title="Определить моё местоположение"
       >
-        Открыть в картах
-      </a>
-    </div>
-
-    <!-- Ссылка открыть в Яндекс.Картах -->
-    <div>
-        <button
-        id="newPointBtn"
-        class="w-full bg-[var(--current-color)] text-black rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition disabled:opacity-20"
-      >
-        Новая генерация
+        <span
+          class="inline-flex items-center justify-center w-6 h-6 text-[var(--current-color)] text-2xl"
+        >
+          <!-- Flaticon-иконка, размер и цвет наследуются от родителя -->
+          <i class="fi fi-ss-location-crosshairs w-6 h-6"></i>
+        </span>
       </button>
-      
+
+      <!-- 1) Форма настроек -->
+      <div id="formContainer" class="sheet-view" data-view="main">
+        <div
+          class="content overflow-y-auto px-4 pb-4 max-h-[calc(80vh-10px)] space-y-4"
+        >
+          <!-- Цель -->
+          <div class="relative">
+            <label for="purpose" class="flex items-center mb-3">
+              <!-- Текст с фиксированным line-height -->
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight"
+              >
+                Цель
+              </span>
+
+              <!-- Кнопка-иконка -->
+              <button
+                type="button"
+                class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
+                data-info="purpose"
+                title="Подробнее про Цель"
+              >
+                <!-- Задаём иконке четкий размер -->
+                <i class="fi fi-ss-interrogation w-4 h-4"></i>
+              </button>
+            </label>
+
+            <input
+              id="purpose"
+              type="text"
+              placeholder="Опиши намерение…"
+              class="w-full bg-transparent /* убираем белый фон */ border border-[var(--text-color)] /* цвет рамки по умолчанию */ rounded-md px-3 py-2 text-[var(--text-color)] /* цвет вводимого текста */ text-base placeholder:text-[var(--hint-color)] /* цвет плейсхолдера */ focus:outline-none focus:ring-2 focus:ring-[var(--current-color)] /* кольцо фокуса */ focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
+            />
+          </div>
+
+          <!-- Тип точки -->
+          <div class="relative">
+            <label for="purpose" class="flex items-center mb-3">
+              <!-- Текст с фиксированным line-height -->
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight"
+              >
+                Тип точки
+              </span>
+
+              <!-- Кнопка-иконка -->
+              <button
+                type="button"
+                class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
+                data-info="pointType"
+                title="Подробнее про типы точек"
+              >
+                <!-- Задаём иконке четкий размер -->
+                <i class="fi fi-ss-interrogation w-4 h-4"></i>
+              </button>
+            </label>
+            <div class="flex gap-3 mb-2">
+              <button
+                type="button"
+                data-value="random"
+                class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                Случайная
+              </button>
+
+              <button
+                type="button"
+                data-value="attractor"
+                class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                Аттрактор
+              </button>
+
+              <button
+                type="button"
+                data-value="void"
+                class="point-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                Пустота
+              </button>
+            </div>
+          </div>
+
+          <!-- Радиус -->
+          <div>
+            <label for="radius" class="flex items-center mb-3">
+              <!-- Текст с фиксированным line-height -->
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight"
+              >
+                Радиус поиска
+              </span>
+            </label>
+            <div class="flex items-center gap-3 mb-2">
+              <button
+                type="button"
+                data-value="1"
+                class="radius-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                1 км
+              </button>
+              <button
+                type="button"
+                data-value="3"
+                class="radius-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                3 км
+              </button>
+              <button
+                type="button"
+                data-value="5"
+                class="radius-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                5 км
+              </button>
+              <input
+                id="radius"
+                type="text"
+                inputmode="decimal"
+                pattern="^\\d+([.,]\\d+)?$"
+                placeholder="Свой км"
+                class="w-24 ml-3 border rounded-lg px-4 py-2 bg-transparent /* убираем белый фон */ border border-[var(--text-color)] /* цвет рамки по умолчанию */ rounded-md px-3 py-2 text-[var(--text-color)] /* цвет вводимого текста */ text-base placeholder:text-[var(--hint-color)] /* цвет плейсхолдера */ focus:outline-none focus:ring-2 focus:ring-[var(--current-color)] /* кольцо фокуса */ focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
+              />
+            </div>
+          </div>
+
+          <!-- API -->
+          <div class="relative">
+            <label for="apiKey" class="flex items-center mb-3">
+              <!-- Текст с фиксированным line-height -->
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight"
+              >
+                API
+              </span>
+
+              <!-- Кнопка-иконка -->
+              <button
+                type="button"
+                class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
+                data-info="apiKey"
+                title="Подробнее про API"
+              >
+                <!-- Задаём иконке четкий размер -->
+                <i class="fi fi-ss-interrogation w-4 h-4"></i>
+              </button>
+            </label>
+
+            <div class="relative w-full">
+              <input
+                id="apiKey"
+                type="password"
+                inputmode="decimal"
+                placeholder="Введите API ключ..."
+                class="w-full bg-transparent /* убираем белый фон */ border border-[var(--text-color)] /* цвет рамки по умолчанию */ rounded-md px-3 py-2 text-[var(--text-color)] /* цвет вводимого текста */ text-base placeholder:text-[var(--hint-color)] /* цвет плейсхолдера */ focus:outline-none focus:ring-2 focus:ring-[var(--current-color)] /* кольцо фокуса */ focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
+              />
+              <button
+                id="toggleApiVisibility"
+                type="button"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                tabindex="-1"
+              >
+                <i id="toggleIcon" class="fi fi-ss-eye w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Кнопка Создать точку -->
+          <div>
+            <button
+              id="createPointBtn"
+              disabled
+              class="w-full bg-[var(--current-color)] text-[var(--color-black)] rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition disabled:opacity-20"
+            >
+              Создать точку
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4) Сводка (results) -->
+      <div
+        id="resultContainer"
+        class="sheet-view px-4 mt-4"
+        data-view="result"
+        hidden
+      >
+        <div id="resultContent">
+          <div class="mb-6">
+            <!-- Блок Цель -->
+            <div class="mb-2">
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+              >
+                Цель
+              </span>
+              <span
+                id="resultPurpose"
+                class="font-medium text-base text-[var(--text-color)]"
+              ></span>
+            </div>
+
+            <!-- Блок Координаты -->
+            <div class="mb-2">
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+              >
+                Координаты
+              </span>
+              <span
+                id="resultCoordinates"
+                class="font-medium text-base text-[var(--text-color)]"
+              ></span>
+            </div>
+
+            <!-- Тип точки и Время в одну линию -->
+            <div class="flex gap-6">
+              <!-- Тип точки -->
+              <div>
+                <span
+                  class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+                >
+                  Тип точки
+                </span>
+                <span
+                  id="resultType"
+                  class="font-medium text-base text-[var(--current-color)]"
+                ></span>
+              </div>
+              <!-- Время -->
+              <div>
+                <span
+                  class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+                >
+                  Время
+                </span>
+                <span
+                  id="resultTime"
+                  class="font-medium text-base text-[var(--text-color)]"
+                ></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Кнопка новая генерация -->
+          <div class="mb-3">
+            <a
+              id="openMapBtn"
+              class="w-full block text-center bg-[var(--secondary-button-color)] text-white rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition"
+              target="_blank"
+              rel="noopener"
+            >
+              Открыть в картах
+            </a>
+          </div>
+
+          <!-- Ссылка открыть в Яндекс.Картах -->
+          <div>
+            <button
+              id="newPointBtn"
+              class="w-full bg-[var(--current-color)] text-black rounded-lg py-2 font-medium text-lg shadow hover:opacity-85 transition disabled:opacity-20"
+            >
+              Новая генерация
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3) Сводка (summary) -->
+      <div
+        id="summaryContainer"
+        class="sheet-view px-4"
+        data-view="summary"
+        hidden
+      >
+        <div id="summarySnippet">
+          <div class="mb-2">
+            <!-- Блок Цель -->
+            <span
+              class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+            >
+              Цель
+            </span>
+            <span
+              id="summaryPurpose"
+              class="font-medium text-base text-[var(--text-color)]"
+            >
+            </span>
+          </div>
+          <!-- Блок Тип точки и Радиус рядом -->
+          <div class="flex gap-6">
+            <!-- Тип точки -->
+            <div>
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+              >
+                Тип точки
+              </span>
+              <span
+                id="summaryType"
+                class="font-medium text-base text-[var(--current-color)]"
+              >
+              </span>
+            </div>
+            <!-- Радиус -->
+            <div>
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+              >
+                Радиус поиска
+              </span>
+              <span
+                id="summaryRadius"
+                class="font-medium text-base text-[var(--text-color)]"
+              >
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Скрипт ES Modules -->
+    <script type="module" src="js/main.js"></script>
+    <!-- OpenLayers JS -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
+  </body>
+
+  <!-- инфо-поп-ап -->
+  <div
+    id="infoOverlay"
+    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-70"
+  >
+    <div
+      id="infoModal"
+      class="relative bg-[var(--hint-modal-color)] pl-4 pr-4 pt-4 pb-4 rounded-2xl max-w-md w-11/12 overflow-hidden"
+    >
+      <!-- Крестик -->
+      <button
+        id="infoClose"
+        class="absolute top-3 right-3 z-20 text-gray-500 hover:text-gray-700"
+        aria-label="Закрыть"
+      >
+        <i class="fi fi-ss-cross text-l"></i>
+      </button>
+
+      <!-- Обёртка для содержимого — здесь уже учитываем отступы между элементами -->
+      <div class="flex flex-col">
+        <!-- сюда динамически вставляется ваш <h2> и <p> или клонируются шаблоны -->
+      </div>
     </div>
   </div>
-</div>
 
-
-            
-
-    <!-- 3) Сводка (summary) -->
-<div id="summaryContainer" class="sheet-view px-4 " data-view="summary" hidden>
-  <div id="summarySnippet">
-    <div class="mb-2">
-    <!-- Блок Цель -->
-    <span class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1">
+  <!-- Шаблон для «Цель» -->
+  <template id="tmpl-purpose">
+    <span
+      class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-3"
+    >
       Цель
     </span>
-    <span id="summaryPurpose" class="font-medium text-base text-[var(--text-color)]">
+    <span class="font-medium text-base text-[var(--text-color)]">
+      Опишите намерение или вопрос, который будете исследовать на прогулке:
+      слово, фразу или идею, отражающую ваше внутреннее состояние или запрос.
     </span>
-  </div>
-  <!-- Блок Тип точки и Радиус рядом -->
-  <div class="flex gap-6">
-    <!-- Тип точки -->
-    <div>
-      <span class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1">
-        Тип точки
-      </span>
-      <span id="summaryType" class="font-medium text-base text-[var(--current-color)]">
-      </span>
-    </div>
-    <!-- Радиус -->
-    <div>
-      <span class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1">
-        Радиус поиска
-      </span>
-      <span id="summaryRadius" class="font-medium text-base text-[var(--text-color)]">
-      </span>
-    </div>
-  </div>
-  </div>
-</div>
-  </div>
+  </template>
 
-  <!-- Скрипт ES Modules -->
-  <script type="module" src="js/main.js"></script>
-  <!-- OpenLayers JS -->
-  <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
-</body>
+  <!-- Шаблон для «Тип точки» -->
+  <template id="tmpl-pointType">
+    <div class="space-y-3">
+      <span
+        class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+      >
+        Типы точек
+      </span>
+      <div class="font-medium text-base text-[var(--text-color)] space-y-1">
+        <p>
+          <span class="font-bold text-[var(--random-button-select)]"
+            >Случайная</span
+          >
+          — полностью рандомная локация
+        </p>
+        <p>
+          <span class="font-bold text-[var(--attractor-button-select)]"
+            >Аттрактор</span
+          >
+          — зона повышенной «интенсивности» событий
+        </p>
+        <p>
+          <span class="font-bold text-[var(--void-button-select)]"
+            >Пустота</span
+          >
+          — места с малой «концентрацией» событий
+        </p>
+      </div>
+    </div>
+  </template>
 
- <!-- инфо-поп-ап -->
- <div id="infoOverlay" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-70">
-  <div id="infoModal"
-       class="bg-white rounded-lg shadow-xl max-w-md w-11/12 p-4 relative flex flex-col space-y-4">
-    <button id="infoClose"
-      class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-      <i class="fi fi-ss-cross"></i>
-    </button>
-    <h2 id="infoTitle" class="text-lg font-semibold mb-2"></h2>
-    <p id="infoText" class="text-gray-700"></p>
-  </div>
-</div>
+  <!-- Шаблон для «API-ключ» -->
+  <template id="tmpl-apiKey">
+    <div class="space-y-4">
+      <span
+        class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-3"
+      >
+        API
+      </span>
+      <div class="font-medium text-base text-[var(--text-color)]">
+        <p>
+          Мы подключаемся к
+          <a
+            href="https://quantumnumbers.anu.edu.au/"
+            class="text-[var(--current-color)] underline"
+            target="_blank"
+          >
+            ANU Quantum Numbers </a
+          >, чтобы получить настоящие квантовые числа. Без ключа вы не сможете
+          делать запросы.
+        </p>
+        <p>Получите свой ключ в личном кабинете и вставьте его в поле «API».</p>
+      </div>
+    </div>
+  </template>
 </html>
-
-
