@@ -1,5 +1,4 @@
-
-console.log('[load] map.js');
+console.log("[load] map.js");
 // js/map.js
 // Управление картой, маркерами и кругами через OpenLayers, экспорт функций для использования из main.js и ui.js
 
@@ -21,18 +20,18 @@ let view;
  * @param {string} targetId - ID контейнера для карты (по умолчанию 'map').
  * @returns {ol.Map} - объект карты
  */
-export function initMap(targetId = 'map') {
-  console.log('[map] Init ');
+export function initMap(targetId = "map") {
+  console.log("[map] Init ");
   view = new ol.View({
     center: ol.proj.fromLonLat(DEFAULT_COORDS),
-    zoom: 14
+    zoom: 14,
   });
   map = new ol.Map({
     target: targetId,
     layers: [rasterLayer, vectorLayer],
-    view: view
+    view: view,
   });
-  return map; 
+  return map;
 }
 
 initMap();
@@ -59,22 +58,25 @@ export function getUserCoords() {
  */
 export function addOrMoveUserMarker(coords) {
   // Удаляем старый маркер
-  vectorSource.getFeatures()
-    .filter(f => f.get('type') === 'user')
-    .forEach(f => vectorSource.removeFeature(f));
+  vectorSource
+    .getFeatures()
+    .filter((f) => f.get("type") === "user")
+    .forEach((f) => vectorSource.removeFeature(f));
 
   // Создаем новый
   const feature = new ol.Feature({
     geometry: new ol.geom.Point(ol.proj.fromLonLat(coords)),
-    type: 'user'
+    type: "user",
   });
-  feature.setStyle(new ol.style.Style({
-    image: new ol.style.Circle({
-      radius: 8,
-      fill: new ol.style.Fill({ color: 'rgba(15,15,15,0.9)' }),
-      stroke: new ol.style.Stroke({ color: '#fff', width: 2 })
+  feature.setStyle(
+    new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 8,
+        fill: new ol.style.Fill({ color: "rgba(15,15,15,0.9)" }),
+        stroke: new ol.style.Stroke({ color: "#fff", width: 2 }),
+      }),
     })
-  }));
+  );
   vectorSource.addFeature(feature);
 }
 
@@ -93,13 +95,18 @@ function createGeodesicCircle(center, radiusKm, points = 64) {
     const theta = (i / points) * 2 * Math.PI;
     const lat2 = Math.asin(
       Math.sin(lat1) * Math.cos(radiusRad) +
-      Math.cos(lat1) * Math.sin(radiusRad) * Math.cos(theta)
+        Math.cos(lat1) * Math.sin(radiusRad) * Math.cos(theta)
     );
-    const lon2 = lon1 + Math.atan2(
-      Math.sin(theta) * Math.sin(radiusRad) * Math.cos(lat1),
-      Math.cos(radiusRad) - Math.sin(lat1) * Math.sin(lat2)
-    );
-    const point = ol.proj.fromLonLat([(lon2 * 180) / Math.PI, (lat2 * 180) / Math.PI]);
+    const lon2 =
+      lon1 +
+      Math.atan2(
+        Math.sin(theta) * Math.sin(radiusRad) * Math.cos(lat1),
+        Math.cos(radiusRad) - Math.sin(lat1) * Math.sin(lat2)
+      );
+    const point = ol.proj.fromLonLat([
+      (lon2 * 180) / Math.PI,
+      (lat2 * 180) / Math.PI,
+    ]);
     coords.push(point);
   }
   return new ol.geom.Polygon([coords]);
@@ -112,38 +119,49 @@ function createGeodesicCircle(center, radiusKm, points = 64) {
  */
 export function showCircleOnMap(coords, radiusKm) {
   // Удаляем старый круг
-  vectorSource.getFeatures()
-    .filter(f => f.get('type') === 'circle')
-    .forEach(f => vectorSource.removeFeature(f));
+  vectorSource
+    .getFeatures()
+    .filter((f) => f.get("type") === "circle")
+    .forEach((f) => vectorSource.removeFeature(f));
 
   // Создаем новый
   const polygonGeom = createGeodesicCircle(coords, radiusKm, 80);
-  const feature = new ol.Feature({ geometry: polygonGeom, type: 'circle' });
-  feature.setStyle(new ol.style.Style({
-    fill: new ol.style.Fill({ color: 'rgba(30,144,255,0.12)' }),
-    stroke: new ol.style.Stroke({ color: '#1e90ff', width: 2 })
-  }));
+  const feature = new ol.Feature({ geometry: polygonGeom, type: "circle" });
+  feature.setStyle(
+    new ol.style.Style({
+      fill: new ol.style.Fill({ color: "rgba(30,144,255,0.12)" }),
+      stroke: new ol.style.Stroke({ color: "#1e90ff", width: 2 }),
+    })
+  );
   vectorSource.addFeature(feature);
 }
 
-export function displayPointOnMap(point, type = 'random') {
+export function displayPointOnMap(point, type = "random") {
   // Удаляем старые точки этого типа
-  vectorSource.getFeatures()
-    .filter(f => f.get('type') === type)
-    .forEach(f => vectorSource.removeFeature(f));
+  vectorSource
+    .getFeatures()
+    .filter((f) => f.get("type") === type)
+    .forEach((f) => vectorSource.removeFeature(f));
 
   const feature = new ol.Feature({
     geometry: new ol.geom.Point(ol.proj.fromLonLat([point.lon, point.lat])),
-    type: type
+    type: type,
   });
-  const color = type === 'random' ? 'red' : type === 'attractor' ? 'orange' : 'green';
-  feature.setStyle(new ol.style.Style({
-    image: new ol.style.Circle({
-      radius: 7,
-      fill: new ol.style.Fill({ color: color }),
-      stroke: new ol.style.Stroke({ color: '#fff', width: 2 })
+  const color =
+    type === "random"
+      ? "rgb(240, 246, 0)"
+      : type === "attractor"
+      ? "rgb(249, 86, 79)"
+      : "rgb(154, 110, 234)";
+  feature.setStyle(
+    new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 7,
+        fill: new ol.style.Fill({ color: color }),
+        stroke: new ol.style.Stroke({ color: "#fff", width: 2 }),
+      }),
     })
-  }));
+  );
   vectorSource.addFeature(feature);
 }
 
@@ -152,13 +170,14 @@ export function displayPointOnMap(point, type = 'random') {
  * @returns {ol.Map}
  */
 export function getMap() {
-  console.log('[map] getMap() called →', map);
+  console.log("[map] getMap() called →", map);
   return map;
 }
 
 export function clearRandomPoint() {
   // ваш vectorSource уже хранит фичи с type==='random'
-  vectorSource.getFeatures()
-    .filter(f => ['random', 'attractor', 'void'].includes(f.get('type')))
-    .forEach(f => vectorSource.removeFeature(f));
+  vectorSource
+    .getFeatures()
+    .filter((f) => ["random", "attractor", "void"].includes(f.get("type")))
+    .forEach((f) => vectorSource.removeFeature(f));
 }
