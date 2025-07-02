@@ -13,7 +13,6 @@
       href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css"
     />
     <!-- Ваши стили (если есть) -->
-    <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css"
@@ -26,7 +25,7 @@
       rel="stylesheet"
     />
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="dist/style.css" />
   </head>
 
   <body class="relative h-screen overflow-hidden">
@@ -389,7 +388,7 @@
   <!-- инфо-поп-ап -->
   <div
     id="infoOverlay"
-    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-70"
+    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/65"
   >
     <div
       id="infoModal"

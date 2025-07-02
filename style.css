@@ -1,3 +1,20 @@
+@import "tailwindcss/preflight";
+@reference "tailwindcss";
+
+@layer components {
+  /* пример ваших кастомных классов */
+  .random-marker {
+    @apply w-3 h-3 rounded-full border-2 border-white bg-[var(--random-button-select)];
+  }
+  .attractor-marker {
+    @apply w-3 h-3 rounded-full border-2 border-white bg-[var(--attractor-button-select)];
+  }
+  .void-marker {
+    @apply w-3 h-3 rounded-full border-2 border-white bg-[var(--void-button-select)];
+  }
+}
+@tailwind utilities;
+
 body {
   font-family: "Onest", sans-serif;
   margin: 0;
@@ -30,4 +47,3 @@ body {
   --selector-color: var(--color-dark-grey);
   --hint-modal-color: var(--color-dark-grey);
 }
-@import "tailwindcss";

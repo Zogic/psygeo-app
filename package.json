@@ -1,0 +1,13 @@
+{
+  "name": "psygeo_app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i src/style.css -o public/dist/style.css --minify",
+    "watch:css": "tailwindcss -i src/style.css -o public/dist/style.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "tailwindcss": "^4.1.11"
+  }
+}

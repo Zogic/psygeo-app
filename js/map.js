@@ -1,183 +1,172 @@
-console.log("[load] map.js");
 // js/map.js
-// Управление картой, маркерами и кругами через OpenLayers, экспорт функций для использования из main.js и ui.js
+console.log("[load] map.js — using DOM Overlays for markers and circles");
 
 // --- Константы и переменные ---
 export const DEFAULT_COORDS = [37.6173, 55.7558]; // [долгота, широта]
 let userCoords;
 
-// Слои карты
-const rasterLayer = new ol.layer.Tile({ source: new ol.source.OSM() });
-const vectorSource = new ol.source.Vector();
-const vectorLayer = new ol.layer.Vector({ source: vectorSource });
+// храним Overlay’ы, чтобы легко обновлять/удалять
+let userOverlay = null;
+let circleOverlay = null;
+const pointOverlays = { random: null, attractor: null, void: null };
 
-// Объекты OpenLayers
-let map;
-let view;
+// OpenLayers объекты
+let map, view;
 
-/**
- * Инициализация карты в контейнере с указанным ID.
- * @param {string} targetId - ID контейнера для карты (по умолчанию 'map').
- * @returns {ol.Map} - объект карты
- */
+// --- Помощник: прочитать CSS-переменную ---
+function getCssVar(name) {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}
+
+// --- Инициализация карты ---
 export function initMap(targetId = "map") {
-  console.log("[map] Init ");
   view = new ol.View({
     center: ol.proj.fromLonLat(DEFAULT_COORDS),
     zoom: 14,
   });
   map = new ol.Map({
     target: targetId,
-    layers: [rasterLayer, vectorLayer],
+    layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
     view: view,
   });
   return map;
 }
-
 initMap();
+view.on("change:resolution", () => {
+  if (currentCircleKm !== null) {
+    _updateCircleSVG(currentCircleKm);
+  }
+});
 
-/**
- * Устанавливает текущие координаты пользователя.
- * @param {[number, number]} coords - [долгота, широта]
- */
+let currentCircleKm = null;
+
+// --- Координаты пользователя ---
 export function setUserCoords(coords) {
   userCoords = coords;
 }
-
-/**
- * Возвращает текущие координаты пользователя.
- * @returns {[number, number]}
- */
 export function getUserCoords() {
   return userCoords;
 }
 
-/**
- * Добавляет или перемещает маркер пользователя на карте.
- * @param {[number, number]} coords - [долгота, широта]
- */
+// --- Маркер пользователя как DOM-Overlay ---
 export function addOrMoveUserMarker(coords) {
-  // Удаляем старый маркер
-  vectorSource
-    .getFeatures()
-    .filter((f) => f.get("type") === "user")
-    .forEach((f) => vectorSource.removeFeature(f));
+  setUserCoords(coords);
 
-  // Создаем новый
-  const feature = new ol.Feature({
-    geometry: new ol.geom.Point(ol.proj.fromLonLat(coords)),
-    type: "user",
-  });
-  feature.setStyle(
-    new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 8,
-        fill: new ol.style.Fill({ color: "rgba(15,15,15,0.9)" }),
-        stroke: new ol.style.Stroke({ color: "#fff", width: 2 }),
-      }),
-    })
-  );
-  vectorSource.addFeature(feature);
-}
-
-// Вспомогательная функция для построения геодезического круга
-function createGeodesicCircle(center, radiusKm, points = 64) {
-  const lat = center[1];
-  const lon = center[0];
-  const coords = [];
-  const earthRadius = 6371;
-  const radiusRad = radiusKm / earthRadius;
-
-  const lat1 = (lat * Math.PI) / 180;
-  const lon1 = (lon * Math.PI) / 180;
-
-  for (let i = 0; i <= points; i++) {
-    const theta = (i / points) * 2 * Math.PI;
-    const lat2 = Math.asin(
-      Math.sin(lat1) * Math.cos(radiusRad) +
-        Math.cos(lat1) * Math.sin(radiusRad) * Math.cos(theta)
-    );
-    const lon2 =
-      lon1 +
-      Math.atan2(
-        Math.sin(theta) * Math.sin(radiusRad) * Math.cos(lat1),
-        Math.cos(radiusRad) - Math.sin(lat1) * Math.sin(lat2)
-      );
-    const point = ol.proj.fromLonLat([
-      (lon2 * 180) / Math.PI,
-      (lat2 * 180) / Math.PI,
-    ]);
-    coords.push(point);
+  // Если уже есть Overlay — просто передвинем
+  if (userOverlay) {
+    userOverlay.setPosition(ol.proj.fromLonLat(coords));
+    return;
   }
-  return new ol.geom.Polygon([coords]);
-}
 
-/**
- * Отображает геодезический круг на карте.
- * @param {[number, number]} coords - центр круга [долгота, широта]
- * @param {number} radiusKm - радиус в километрах
- */
-export function showCircleOnMap(coords, radiusKm) {
-  // Удаляем старый круг
-  vectorSource
-    .getFeatures()
-    .filter((f) => f.get("type") === "circle")
-    .forEach((f) => vectorSource.removeFeature(f));
+  // Иначе создаём новый HTML-элемент
+  const el = document.createElement("div");
+  el.className = "user-marker";
+  // стили можно прописать в CSS: .user-marker { width:16px; height:16px; border:2px solid white; background: var(--current-color); border-radius:50%; }
 
-  // Создаем новый
-  const polygonGeom = createGeodesicCircle(coords, radiusKm, 80);
-  const feature = new ol.Feature({ geometry: polygonGeom, type: "circle" });
-  feature.setStyle(
-    new ol.style.Style({
-      fill: new ol.style.Fill({ color: "rgba(30,144,255,0.12)" }),
-      stroke: new ol.style.Stroke({ color: "#1e90ff", width: 2 }),
-    })
-  );
-  vectorSource.addFeature(feature);
-}
-
-export function displayPointOnMap(point, type = "random") {
-  // Удаляем старые точки этого типа
-  vectorSource
-    .getFeatures()
-    .filter((f) => f.get("type") === type)
-    .forEach((f) => vectorSource.removeFeature(f));
-
-  const feature = new ol.Feature({
-    geometry: new ol.geom.Point(ol.proj.fromLonLat([point.lon, point.lat])),
-    type: type,
+  // создаём Overlay
+  userOverlay = new ol.Overlay({
+    element: el,
+    positioning: "center-center",
+    stopEvent: false,
   });
-  const color =
-    type === "random"
-      ? "rgb(240, 246, 0)"
-      : type === "attractor"
-      ? "rgb(249, 86, 79)"
-      : "rgb(154, 110, 234)";
-  feature.setStyle(
-    new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 7,
-        fill: new ol.style.Fill({ color: color }),
-        stroke: new ol.style.Stroke({ color: "#fff", width: 2 }),
-      }),
-    })
+  userOverlay.setPosition(ol.proj.fromLonLat(coords));
+  map.addOverlay(userOverlay);
+}
+
+// --- Геодезический круг как SVG в Overlay ---
+export function showCircleOnMap(coords, radiusKm) {
+  // Сохраняем, чтобы ресайзить позже
+  currentCircleKm = radiusKm;
+
+  // Если уже есть overlay — удалим
+  if (circleOverlay) {
+    map.removeOverlay(circleOverlay);
+    circleOverlay = null;
+  }
+
+  // Создадим обёртку (без SVG, SVG вставится уже в _updateCircleSVG)
+  const wrapper = document.createElement("div");
+  wrapper.className = "circle-overlay";
+  wrapper.style.position = "absolute"; // чтобы transform работал правильно
+
+  circleOverlay = new ol.Overlay({
+    element: wrapper,
+    positioning: "center-center", // центрируем по координате
+    stopEvent: false,
+  });
+  circleOverlay.setPosition(ol.proj.fromLonLat(coords));
+  map.addOverlay(circleOverlay);
+
+  // И сразу отрисуем SVG
+  _updateCircleSVG(radiusKm);
+}
+
+// Вспомогательная: (re)рисует SVG внутрь wrapper-а
+function _updateCircleSVG(radiusKm) {
+  if (!circleOverlay) return;
+  const wrapper = circleOverlay.getElement();
+  const resolution = view.getResolution();
+  const radiusPx = (radiusKm * 1000) / resolution;
+
+  // Обновляем HTML
+  wrapper.innerHTML = `
+    <svg width="${2 * radiusPx}" height="${2 * radiusPx}"
+         viewBox="0 0 ${2 * radiusPx} ${2 * radiusPx}">
+      <circle
+        cx="${radiusPx}"
+        cy="${radiusPx}"
+        r="${radiusPx}"
+        fill="var(--current-color)" fill-opacity="0.1"
+        stroke="var(--current-color)" stroke-width="2"
+      />
+    </svg>`;
+  // Смещаем так, чтобы центр SVG точно в координате
+  wrapper.style.transform = `translate(${-radiusPx}px,${-radiusPx}px)`;
+}
+
+// --- Точки (random/attractor/void) как HTML-элементы Overlay’ы ---
+export function displayPointOnMap(point, type = "random") {
+  // 1) если уже есть — убираем старый
+  if (pointOverlays[type]) {
+    map.removeOverlay(pointOverlays[type]);
+    pointOverlays[type] = null;
+  }
+
+  // 2) создаём элемент и сразу добавляем все нужные утилиты Tailwind
+  const el = document.createElement("div");
+  el.classList.add(
+    "w-3.5",
+    "h-3.5", // размер
+    "rounded-full", // круг
+    "border-2",
+    "border-white", // белая граница
+    `bg-[var(--${type}-button-select)]`
   );
-  vectorSource.addFeature(feature);
+
+  // 3) привязываем его к координатам
+  const overlay = new ol.Overlay({
+    element: el,
+    positioning: "center-center",
+    stopEvent: false,
+  });
+  overlay.setPosition(ol.proj.fromLonLat([point.lon, point.lat]));
+  map.addOverlay(overlay);
+  pointOverlays[type] = overlay;
 }
 
-/**
- * Возвращает экземпляр карты (ol.Map).
- * @returns {ol.Map}
- */
-export function getMap() {
-  console.log("[map] getMap() called →", map);
-  return map;
-}
-
+// --- Очищаем все «рандомные» точки ---
 export function clearRandomPoint() {
-  // ваш vectorSource уже хранит фичи с type==='random'
-  vectorSource
-    .getFeatures()
-    .filter((f) => ["random", "attractor", "void"].includes(f.get("type")))
-    .forEach((f) => vectorSource.removeFeature(f));
+  ["random", "attractor", "void"].forEach((type) => {
+    if (pointOverlays[type]) {
+      map.removeOverlay(pointOverlays[type]);
+      pointOverlays[type] = null;
+    }
+  });
+}
+
+// --- Доступ к карте (для других модулей) ---
+export function getMap() {
+  return map;
 }
