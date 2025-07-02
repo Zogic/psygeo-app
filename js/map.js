@@ -53,9 +53,16 @@ export function initMap(targetId = "map") {
     center: ol.proj.fromLonLat(DEFAULT_COORDS),
     zoom: 14,
   });
+
+  // Создаём TileLayer и даём ему свой CSS-класс
+  const tileLayer = new ol.layer.Tile({
+    source: new ol.source.OSM(),
+    className: "custom-tiles", // ← добавили className
+  });
+
   map = new ol.Map({
     target: targetId,
-    layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+    layers: [tileLayer],
     view,
   });
 

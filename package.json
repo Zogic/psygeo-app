@@ -9,5 +9,9 @@
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.11",
     "tailwindcss": "^4.1.11"
+  },
+  "dependencies": {
+    "ol": "^10.6.1",
+    "ol-mapbox-style": "^13.0.1"
   }
 }
