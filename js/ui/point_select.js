@@ -9,6 +9,7 @@ import {
   getMap,
   displayPointOnMap,
   clearRandomPoint,
+  updateCircleStyle,
 } from "../map.js";
 import {
   generatePointInRadius,
@@ -108,6 +109,7 @@ btns.forEach((btn) => {
       .getPropertyValue(`--${type}-button-select`)
       .trim();
     document.documentElement.style.setProperty("--current-color", selColor);
+    updateCircleStyle();
   });
 });
 
