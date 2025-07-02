@@ -63,7 +63,6 @@ export function addOrMoveUserMarker(coords) {
   // Иначе создаём новый HTML-элемент
   const el = document.createElement("div");
   el.className = "user-marker";
-  // стили можно прописать в CSS: .user-marker { width:16px; height:16px; border:2px solid white; background: var(--current-color); border-radius:50%; }
 
   // создаём Overlay
   userOverlay = new ol.Overlay({
@@ -136,14 +135,7 @@ export function displayPointOnMap(point, type = "random") {
 
   // 2) создаём элемент и сразу добавляем все нужные утилиты Tailwind
   const el = document.createElement("div");
-  el.classList.add(
-    "w-3.5",
-    "h-3.5", // размер
-    "rounded-full", // круг
-    "border-2",
-    "border-white", // белая граница
-    `bg-[var(--${type}-button-select)]`
-  );
+  el.classList.add(`${type}-marker`);
 
   // 3) привязываем его к координатам
   const overlay = new ol.Overlay({
