@@ -1,4 +1,5 @@
 export const state = {
-  selectedPointType: 'random',
-  isSummaryMode: false
+  selectedPointType: "random",
+  selectedGeneratorType: "pseudo",
+  isSummaryMode: false,
 };

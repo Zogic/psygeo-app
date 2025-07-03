@@ -104,7 +104,7 @@
 
           <!-- Тип точки -->
           <div class="relative">
-            <label for="purpose" class="flex items-center mb-3">
+            <label for="point" class="flex items-center mb-3">
               <!-- Текст с фиксированным line-height -->
               <span
                 class="font-bold text-xl text-[var(--text-color)] leading-tight"
@@ -193,8 +193,48 @@
             </div>
           </div>
 
-          <!-- API -->
+          <!-- Тип генерации -->
           <div class="relative">
+            <label for="generator-type" class="flex items-center mb-3">
+              <!-- Текст с фиксированным line-height -->
+              <span
+                class="font-bold text-xl text-[var(--text-color)] leading-tight"
+              >
+                Способ генерации
+              </span>
+
+              <!-- Кнопка-иконка -->
+              <button
+                type="button"
+                class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
+                data-info="generatorType"
+                title="Подробнее про способы генерации точек"
+              >
+                <!-- Задаём иконке четкий размер -->
+                <i class="fi fi-ss-interrogation w-4 h-4"></i>
+              </button>
+            </label>
+            <div class="flex gap-3 mb-2">
+              <button
+                type="button"
+                data-value="pseudo"
+                class="generator-type-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                Псевдо-случайный
+              </button>
+
+              <button
+                type="button"
+                data-value="quantum"
+                class="generator-type-btn font-medium px-4 py-2 rounded-lg border border-[var(--text-color)] bg-transparent text-[var(--text-color)] transition"
+              >
+                Квантовый
+              </button>
+            </div>
+          </div>
+
+          <!-- API -->
+          <div id="apiSection" class="relative hidden">
             <label for="apiKey" class="flex items-center mb-3">
               <!-- Текст с фиксированным line-height -->
               <span
@@ -459,6 +499,31 @@
             >Пустота</span
           >
           — места с малой «концентрацией» событий
+        </p>
+      </div>
+    </div>
+  </template>
+
+  <!-- Шаблон для «Способ генерации» -->
+  <template id="tmpl-generatorType">
+    <div class="space-y-3">
+      <span
+        class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+      >
+        Способ генерации
+      </span>
+      <div class="font-medium text-base text-[var(--text-color)] space-y-1">
+        <p>
+          <span class="font-bold text-[var(--text-color)]"
+            >Псевдо-случайный</span
+          >
+          — случайная генерация, основывающаяся на энтропии. Не истинно
+          случайная.
+        </p>
+        <p>
+          <span class="font-bold text-[var(--text-color)]">Квантовая</span>
+          — использует квантовый генератор случайных чисел. Необходим сторонний
+          API для работы.
         </p>
       </div>
     </div>
