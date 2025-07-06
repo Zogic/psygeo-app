@@ -12,7 +12,7 @@ import "./ui/results.js";
 import "./ui/summary.js";
 import "./ui/ui_builder.js";
 import "./ui/generator_type_select.js";
-
+import { goToMyLocation } from "./ui/map_controls.js";
 import {
   initMap,
   DEFAULT_COORDS,
@@ -33,6 +33,8 @@ window.addEventListener("DOMContentLoaded", () => {
         coords,
         parseFloat(document.getElementById("radius").value)
       );
+      goToMyLocation();
+      console.log("geolocation available");
     },
     () => {
       // Если отказано — используем дефолтные координаты
@@ -42,6 +44,7 @@ window.addEventListener("DOMContentLoaded", () => {
         DEFAULT_COORDS,
         parseFloat(document.getElementById("radius").value)
       );
+      console.log("geolocation NOT available");
     }
   );
 

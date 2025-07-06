@@ -48,12 +48,23 @@ export function goToMyLocation() {
     return alert("Геолокация не поддерживается.");
   }
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const coords = [pos.coords.longitude, pos.coords.latitude];
+    (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const coords = [lon, lat];
+
       setUserCoords(coords);
       addOrMoveUserMarker(coords);
       showCircleOnMap(coords, getRadius());
+      map.getView().animate({
+        center: ol.proj.fromLonLat(coords),
+        duration: 500,
+      });
     },
-    () => alert("Не удалось определить местоположение.")
+    (err) => {
+      console.error("Ошибка геолокации", err);
+      alert("Не удалось определить местоположение.");
+    }
+    // ← убираем 3-й аргумент с опциями
   );
 }

@@ -45,7 +45,9 @@ export function setupUI() {
   document.getElementById("radius").value = getRadius();
 
   // Кнопка определения местоположения
-  document.getElementById("locateBtn").onclick = goToMyLocation;
+  document
+    .getElementById("locateBtn")
+    .addEventListener("click", goToMyLocation);
 
   // Валидация формы
   const apiInput = document.getElementById("apiKey");
