@@ -236,24 +236,7 @@
           <!-- API -->
           <div id="apiSection" class="relative hidden">
             <label for="apiKey" class="flex items-center mb-3">
-              <!-- Текст с фиксированным line-height -->
-              <span
-                class="font-bold text-xl text-[var(--text-color)] leading-tight"
-              >
-                API
-              </span>
-
-              <!-- Кнопка-иконка -->
-              <button
-                type="button"
-                class="flex items-center justify-center ml-1 info-btn text-[var(--hint-color)]"
-                data-info="apiKey"
-                title="Подробнее про API"
-              >
-                <!-- Задаём иконке четкий размер -->
-                <i class="fi fi-ss-interrogation w-4 h-4"></i>
-              </button>
-            </label>
+              
 
             <div class="relative w-full">
               <input
@@ -522,8 +505,14 @@
         </p>
         <p>
           <span class="font-bold text-[var(--text-color)]">Квантовая</span>
-          — использует квантовый генератор случайных чисел. Необходим сторонний
-          API для работы.
+          — мы подключаемся к
+          <a
+            href="https://quantumnumbers.anu.edu.au/"
+            class="text-[var(--current-color)] underline"
+            target="_blank"
+          >
+            ANU Quantum Numbers </a
+          >, чтобы получить настоящие квантовые числа.
         </p>
       </div>
     </div>

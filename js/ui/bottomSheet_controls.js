@@ -17,12 +17,7 @@ import {
   findAttractor,
   findVoid,
 } from "../generator.js";
-import {
-  getRadius,
-  escapeHtml,
-  getCurrentTimestamp,
-  validateApiAndPurpose,
-} from "../utils.js";
+import { getRadius, escapeHtml, getCurrentTimestamp } from "../utils.js";
 
 import { goToMyLocation } from "./map_controls.js";
 

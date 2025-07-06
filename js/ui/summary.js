@@ -1,5 +1,4 @@
-console.log('[load] summary.js');
-
+console.log("[load] summary.js");
 
 import {
   DEFAULT_COORDS,
@@ -8,51 +7,40 @@ import {
   addOrMoveUserMarker,
   showCircleOnMap,
   getMap,
-  displayPointOnMap, 
-  clearRandomPoint
-} from '../map.js';
+  displayPointOnMap,
+  clearRandomPoint,
+} from "../map.js";
 import {
   generatePointInRadius,
   generateRandomPointsInRadius,
   countNeighbors,
   findAttractor,
-  findVoid
-} from '../generator.js';
-import {
-  getRadius,
-  escapeHtml,
-  getCurrentTimestamp,
-  validateApiAndPurpose
-} from '../utils.js';
+  findVoid,
+} from "../generator.js";
+import { getRadius, escapeHtml, getCurrentTimestamp } from "../utils.js";
 import {
   adjustPanelHeight,
   showMain,
   showSummary,
-} from './bottomSheet_controls.js';
+} from "./bottomSheet_controls.js";
 
-import {
-  goToMyLocation,
-} from './map_controls.js';
+import { goToMyLocation } from "./map_controls.js";
 
-import {
-  updateRadiusButtonStyles,
-} from './radius_select.js';
+import { updateRadiusButtonStyles } from "./radius_select.js";
 
+import { onCreatePoint } from "./point_creation.js";
 
-import {
-  onCreatePoint,
-} from './point_creation.js';
-
-import { state } from '../state.js';
-
+import { state } from "../state.js";
 
 // настройка Summary
 export function updateSummarySnippet() {
-  const p = document.getElementById('purpose').value || '—';
+  const p = document.getElementById("purpose").value || "—";
   const r = getRadius().toFixed(1);
-  const btn = document.querySelector(`.point-btn[data-value="${state.selectedPointType}"]`);
-  const t   = btn ? btn.textContent.trim() : state.selectedPointType;
-  document.getElementById('summaryPurpose').textContent = p;
-  document.getElementById('summaryType')   .textContent = t;
-  document.getElementById('summaryRadius') .textContent = `${r} км`;
+  const btn = document.querySelector(
+    `.point-btn[data-value="${state.selectedPointType}"]`
+  );
+  const t = btn ? btn.textContent.trim() : state.selectedPointType;
+  document.getElementById("summaryPurpose").textContent = p;
+  document.getElementById("summaryType").textContent = t;
+  document.getElementById("summaryRadius").textContent = `${r} км`;
 }

@@ -3,6 +3,12 @@ import {
   showMain,
   showSummary,
 } from "./bottomSheet_controls.js";
+import {
+  getRadius,
+  escapeHtml,
+  getCurrentTimestamp,
+  validateCreateBtn,
+} from "../utils.js";
 import { POINT_HOVER_CLASSES, POINT_SELECT_CLASSES } from "./point_select.js";
 import { state } from "../state.js";
 
@@ -51,6 +57,7 @@ generatorBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     state.selectedGeneratorType = btn.dataset.value;
     updateGeneratorButtonStyles();
+    validateCreateBtn();
   });
 });
 

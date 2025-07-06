@@ -1,5 +1,4 @@
-console.log('[load] ui_builder.js');
-
+console.log("[load] ui_builder.js");
 
 import {
   DEFAULT_COORDS,
@@ -8,64 +7,51 @@ import {
   addOrMoveUserMarker,
   showCircleOnMap,
   getMap,
-  displayPointOnMap, 
-  clearRandomPoint
-} from '../map.js';
+  displayPointOnMap,
+  clearRandomPoint,
+} from "../map.js";
 import {
   generatePointInRadius,
   generateRandomPointsInRadius,
   countNeighbors,
   findAttractor,
-  findVoid
-} from '../generator.js';
+  findVoid,
+} from "../generator.js";
 import {
   getRadius,
   escapeHtml,
   getCurrentTimestamp,
-  validateApiAndPurpose
-} from '../utils.js';
+  validateCreateBtn,
+} from "../utils.js";
 import {
   adjustPanelHeight,
   showMain,
   showSummary,
-} from './bottomSheet_controls.js';
+} from "./bottomSheet_controls.js";
 
-import {
-  goToMyLocation,
-} from './map_controls.js';
+import { goToMyLocation } from "./map_controls.js";
 
-import {
-  updateRadiusButtonStyles,
-} from './radius_select.js';
+import { updateRadiusButtonStyles } from "./radius_select.js";
 
-import {
-  updateSummarySnippet,
-} from './summary.js';
+import { updateSummarySnippet } from "./summary.js";
 
-import {
-  onCreatePoint,
-} from './point_creation.js';
+import { onCreatePoint } from "./point_creation.js";
 
-import{newSetup,} from './results.js'
-
-
+import { newSetup } from "./results.js";
 
 export function setupUI() {
- 
   // Радиус по умолчанию
-  document.getElementById('radius').value = getRadius();
+  document.getElementById("radius").value = getRadius();
 
   // Кнопка определения местоположения
-  document.getElementById('locateBtn').onclick = goToMyLocation;
+  document.getElementById("locateBtn").onclick = goToMyLocation;
 
   // Валидация формы
-  const apiInput = document.getElementById('apiKey');
-  const purposeInput = document.getElementById('purpose');
-  const createBtn = document.getElementById('createPointBtn');
-  const newPointBtn = document.getElementById('newPointBtn');
-  const apiWarning = document.getElementById('apiWarning');
-  apiInput.addEventListener('input', () => validateApiAndPurpose(createBtn, apiWarning));
-  purposeInput.addEventListener('input', () => validateApiAndPurpose(createBtn, apiWarning));
+  const apiInput = document.getElementById("apiKey");
+  const purposeInput = document.getElementById("purpose");
+  const createBtn = document.getElementById("createPointBtn");
+  const newPointBtn = document.getElementById("newPointBtn");
+  validateCreateBtn();
 
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;
@@ -73,8 +59,5 @@ export function setupUI() {
   // Кнопка создания новой точки
   newPointBtn.onclick = newSetup;
 
-
-
-showMain();         // переключить на main-view
-
+  showMain(); // переключить на main-view
 }

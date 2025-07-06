@@ -1,5 +1,7 @@
-// js/generator.js
+// src/generator.js
 // Функции генерации точек (случайная, аттрактор, пустота) для использования из main.js и ui.js
+
+import { random01 } from "./random/index.js";
 
 /**
  * Генерирует случайную точку внутри круга радиусом radiusKm вокруг (lat, lon).
@@ -11,8 +13,11 @@
 export function generatePointInRadius(lat, lon, radiusKm) {
   const earthRadius = 6371;
   const radiusRad = radiusKm / earthRadius;
-  const theta = Math.random() * 2 * Math.PI;
-  const randRadius = Math.sqrt(Math.random()) * radiusRad;
+
+  // теперь используем crypto.getRandomValues() через random01()
+  const theta = random01() * 2 * Math.PI;
+  const randRadius = Math.sqrt(random01()) * radiusRad;
+
   const lat1 = (lat * Math.PI) / 180;
   const lon1 = (lon * Math.PI) / 180;
 
@@ -69,8 +74,9 @@ export function countNeighbors(points, radiusM) {
   }
 
   return points.map((pt, i) =>
-    points.reduce((cnt, other, j) =>
-      i !== j && distance(pt, other) < radiusM ? cnt + 1 : cnt,
+    points.reduce(
+      (cnt, other, j) =>
+        i !== j && distance(pt, other) < radiusM ? cnt + 1 : cnt,
       0
     )
   );
