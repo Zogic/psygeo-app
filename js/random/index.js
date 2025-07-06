@@ -1,18 +1,18 @@
 // src/random/index.js
 import { state } from "../state.js";
+import { quantumRandom01 } from "./quantum.js";
 
 /**
- * Возвращает случайное число ∈ [0,1).
- * Пока реализован только pseudo-режим, остальные типы — в будущем.
+ * Всегда возвращает Promise<number> ∈ [0,1).
+ * Выбирает источник по state.selectedGeneratorType.
  */
-export function random01() {
-  if (state.selectedGeneratorType !== "pseudo") {
-    throw new Error(
-      `Generator "${state.selectedGeneratorType}" not implemented`
-    );
+export async function random01() {
+  if (state.selectedGeneratorType === "quantum") {
+    // QRNG: может выкинуть исключение при ошибке API-ключа или сети
+    return await quantumRandom01();
   }
+  // PRNG через crypto.getRandomValues()
   const buf = new Uint32Array(1);
   crypto.getRandomValues(buf);
-  // 0 ≤ buf[0] ≤ 0xffffffff
   return buf[0] / 0xffffffff;
 }

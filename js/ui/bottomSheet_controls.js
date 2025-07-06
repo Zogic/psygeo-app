@@ -59,6 +59,7 @@ export function showMain() {
   document.querySelector('[data-view="main"]').hidden = false;
   document.querySelector('[data-view="summary"]').hidden = true;
   document.querySelector('[data-view="result"]').hidden = true;
+  document.querySelector('[data-view="loading"]').hidden = true;
   document.getElementById("dragHandle").hidden = false;
   adjustPanelHeight(); // меряем высоту main-контента
 }
@@ -69,7 +70,7 @@ export function showSummary() {
   document.querySelector('[data-view="summary"]').hidden = false;
   document.querySelector('[data-view="result"]').hidden = true;
   document.getElementById("dragHandle").hidden = false;
-  adjustPanelHeight(); // меряем высоту summarySnippet
+  adjustPanelHeight(); // меряем высоту
 }
 
 export function showResult() {
@@ -77,8 +78,19 @@ export function showResult() {
   document.querySelector('[data-view="main"]').hidden = true;
   document.querySelector('[data-view="summary"]').hidden = true;
   document.querySelector('[data-view="result"]').hidden = false;
+  document.querySelector('[data-view="loading"]').hidden = true;
   document.getElementById("dragHandle").hidden = true;
-  adjustPanelHeight(); // меряем высоту summarySnippet
+  adjustPanelHeight(); // меряем высоту
+}
+
+export function showLoading() {
+  state.isSummaryMode = true;
+  document.querySelector('[data-view="main"]').hidden = true;
+  document.querySelector('[data-view="summary"]').hidden = true;
+  document.querySelector('[data-view="result"]').hidden = true;
+  document.querySelector('[data-view="loading"]').hidden = false;
+  document.getElementById("dragHandle").hidden = true;
+  adjustPanelHeight(); // меряем высоту
 }
 
 // Нижняя панель: выдвижение

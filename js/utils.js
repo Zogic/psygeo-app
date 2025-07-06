@@ -43,14 +43,13 @@ export function getCurrentTimestamp() {
 
 export function validateCreateBtn() {
   const createBtn = document.getElementById("createPointBtn");
-  const apiInput = document.getElementById("apiKey");
-  const api = apiInput.value.trim();
+  const api = document.getElementById("apiKey").value.trim();
 
   if (state.selectedGeneratorType === "pseudo") {
-    // для псевдо — всегда активна
+    // Псевдо-генерация — кнопка всегда активна
     createBtn.disabled = false;
   } else {
-    // для quantum — проверяем, что ключ есть и равен "12345"
-    createBtn.disabled = api !== "12345";
+    // Квантовый — кнопку включаем, как только в поле что-то введено
+    createBtn.disabled = api === "";
   }
 }

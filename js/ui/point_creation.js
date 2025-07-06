@@ -1,5 +1,4 @@
-console.log("[load] point_creation.js");
-
+// src/controls/point_creation.js
 import {
   DEFAULT_COORDS,
   setUserCoords,
@@ -10,6 +9,7 @@ import {
   displayPointOnMap,
   clearRandomPoint,
 } from "../map.js";
+
 import {
   generatePointInRadius,
   generateRandomPointsInRadius,
@@ -17,6 +17,7 @@ import {
   findAttractor,
   findVoid,
 } from "../generator.js";
+
 import { getRadius, escapeHtml, getCurrentTimestamp } from "../utils.js";
 
 import {
@@ -24,65 +25,90 @@ import {
   showMain,
   showSummary,
   showResult,
-} from "./bottomSheet_controls.js";
+  showLoading,
+} from "./bottomSheet_controls.js"; // добавили showLoading, hideLoading, showInfo
 
-import { goToMyLocation } from "./map_controls.js";
-
-import { updateRadiusButtonStyles } from "./radius_select.js";
-
-import { updateSummarySnippet } from "./summary.js";
+import { showInfo } from "./hints.js";
 
 import { createResult } from "./results.js";
-
 import { state } from "../state.js";
 
-let copyText = "";
-state.selectedPointType = "random"; // как раньше
+state.selectedPointType = "random"; // начальное значение :contentReference[oaicite:3]{index=3}
 
 /**
- * Генерация точки и вывод результата
+ * Генерация точки и вывод результата (псевдо- или квантовый режим).
  */
-export function onCreatePoint() {
+export async function onCreatePoint() {
   const coords = getUserCoords();
   if (!coords) {
     alert("Сначала выбери стартовую точку!");
     return;
   }
 
-  // 1) Собираем входные данные
   const purpose = document.getElementById("purpose").value || "—";
   const radiusKm = getRadius();
   const type = state.selectedPointType; // 'random'|'attractor'|'void'
 
-  // 2) Генерируем точку и рисуем её
-  let point, label;
-  if (type === "random") {
-    point = generatePointInRadius(coords[1], coords[0], radiusKm);
-    label = "Случайная точка";
-  } else {
-    const pts = generateRandomPointsInRadius(
-      coords[1],
-      coords[0],
-      radiusKm,
-      120
-    );
-    const dens = countNeighbors(pts, 250);
-    if (type === "attractor") {
-      point = findAttractor(pts, dens);
-      label = "Аттрактор";
+  // PSEUDO-режим (синхронно)
+  if (state.selectedGeneratorType === "pseudo") {
+    let point, label;
+    if (type === "random") {
+      point = await generatePointInRadius(coords[1], coords[0], radiusKm);
+      label = "Случайная точка";
     } else {
-      point = findVoid(pts, dens);
-      label = "Пустота";
+      const pts = await generateRandomPointsInRadius(
+        coords[1],
+        coords[0],
+        radiusKm,
+        120
+      );
+      const dens = countNeighbors(pts, 250);
+      if (type === "attractor") {
+        point = findAttractor(pts, dens);
+        label = "Аттрактор";
+      } else {
+        point = findVoid(pts, dens);
+        label = "Пустота";
+      }
     }
+
+    displayPointOnMap(point, type);
+    createResult({ purpose: escapeHtml(purpose), point, label });
+    showResult();
+    return;
   }
-  displayPointOnMap(point, type);
 
-  createResult({
-    purpose: escapeHtml(purpose),
-    point,
-    label: label,
-  });
-  showResult();
+  // QUANTUM-режим (асинхронно, с загрузкой)
+  showLoading();
+  try {
+    let point, label;
 
-  console.log("adjust on creation");
+    if (type === "random") {
+      point = await generatePointInRadius(coords[1], coords[0], radiusKm);
+      label = "Случайная точка";
+    } else {
+      const pts = await generateRandomPointsInRadius(
+        coords[1],
+        coords[0],
+        radiusKm,
+        120
+      );
+      const dens = countNeighbors(pts, 250);
+      if (type === "attractor") {
+        point = findAttractor(pts, dens);
+        label = "Аттрактор";
+      } else {
+        point = findVoid(pts, dens);
+        label = "Пустота";
+      }
+    }
+
+    displayPointOnMap(point, type);
+    createResult({ purpose: escapeHtml(purpose), point, label });
+    showResult();
+  } catch (err) {
+    // при ошибке QRNG
+    showMain();
+    showInfo("QRNGError");
+  }
 }

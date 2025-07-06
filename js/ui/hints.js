@@ -33,45 +33,54 @@ import { updateSummarySnippet } from "./summary.js";
 
 import { onCreatePoint } from "./point_creation.js";
 
-// 1) Навешиваем общий клик на все кнопки (i)
+// 1. Функция, которая по ключу key (например, "purpose") показывает подсказку
+export function showInfo(key) {
+  const template = document.getElementById(`tmpl-${key}`);
+  if (!template) return; // если такого шаблона нет — выход
+
+  const overlay = document.getElementById("infoOverlay");
+  const modal = document.getElementById("infoModal");
+
+  // Удаляем предыдущий контент (кроме кнопки закрытия)
+  modal
+    .querySelectorAll(":scope > .template-content")
+    .forEach((el) => el.remove());
+
+  // Клонируем нужный <template>
+  const clone = template.content.cloneNode(true);
+
+  // Оборачиваем, чтобы при следующем вызове было легко удалить
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("template-content");
+  wrapper.appendChild(clone);
+
+  // Вставляем внутрь модалки после кнопки закрытия
+  modal.appendChild(wrapper);
+
+  // Показываем оверлей
+  overlay.classList.remove("hidden");
+}
+
+// 2. Повесим на все кнопки info-btn вызов нашей функции при клике
 document.querySelectorAll(".info-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const key = btn.dataset.info; // "purpose" / "pointType" / "apiKey"
-    const template = document.getElementById(`tmpl-${key}`);
-    if (!template) return; // шаблона нет — выходим
-
-    const overlay = document.getElementById("infoOverlay");
-    const modal = document.getElementById("infoModal");
-
-    // 2) Удаляем предыдущий контент (всё кроме кнопки закрытия)
-    modal
-      .querySelectorAll(":scope > .template-content")
-      .forEach((el) => el.remove());
-
-    // 3) Клонируем нужный <template>
-    const clone = template.content.cloneNode(true);
-
-    // 4) Оборачиваем его, чтобы потом легко чистить снова
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("template-content");
-    wrapper.appendChild(clone);
-
-    // 5) Вставляем внутрь модалки после кнопки закрытия
-    modal.appendChild(wrapper);
-
-    // 6) Показываем оверлей
-    overlay.classList.remove("hidden");
+    showInfo(btn.dataset.info);
   });
 });
 
-// 7) Закрытие: по крестику
+// 3. Обработчик для закрытия (по кнопке или клику вне модалки)
 document.getElementById("infoClose").addEventListener("click", () => {
   document.getElementById("infoOverlay").classList.add("hidden");
 });
-
-// 8) Закрытие: кликом по пустому фону
-document.getElementById("infoOverlay").addEventListener("click", (evt) => {
-  if (evt.target === evt.currentTarget) {
-    document.getElementById("infoOverlay").classList.add("hidden");
+document.getElementById("infoOverlay").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) {
+    // кликнули по оверлею вне модалки
+    e.currentTarget.classList.add("hidden");
   }
+});
+
+// 4. Теперь можно вызывать showInfo("purpose") где угодно
+// например, показывать подсказку при загрузке страницы:
+window.addEventListener("load", () => {
+  // showInfo("purpose");
 });

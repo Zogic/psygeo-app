@@ -56,7 +56,7 @@
       <!-- Кнопка "Моё положение" -->
       <button
         id="locateBtn"
-        class="absolute right-4 bottom-[calc(100%+10px)] z-10 bg-[#0F0F0F]/[0.9] backdrop-blur-sm shadow-lg rounded-full p-3 flex items-center justify-center hover:bg-indigo-100 transition"
+        class="absolute right-4 bottom-[calc(100%+10px)] z-10 bg-[#0F0F0F]/[0.9] backdrop-blur-sm shadow-lg rounded-full p-3 flex items-center justify-center border-2 border-transparent hover:border-[var(--current-color)] transition"
         title="Определить моё местоположение"
       >
         <span
@@ -98,7 +98,7 @@
               id="purpose"
               type="text"
               placeholder="Опиши намерение…"
-              class="w-full bg-transparent /* убираем белый фон */ border border-[var(--text-color)] /* цвет рамки по умолчанию */ rounded-md px-3 py-2 text-[var(--text-color)] /* цвет вводимого текста */ text-base placeholder:text-[var(--hint-color)] /* цвет плейсхолдера */ focus:outline-none focus:ring-2 focus:ring-[var(--current-color)] /* кольцо фокуса */ focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
+              class="w-full bg-transparent border border-[var(--text-color)] rounded-md px-3 py-2 text-[var(--text-color)]  text-base placeholder:text-[var(--hint-color)]  focus:outline-none focus:ring-2 focus:ring-[var(--current-color)]  focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
             />
           </div>
 
@@ -188,7 +188,7 @@
                 inputmode="decimal"
                 pattern="^\\d+([.,]\\d+)?$"
                 placeholder="Свой км"
-                class="w-24 ml-3 border rounded-lg px-4 py-2 bg-transparent /* убираем белый фон */ border border-[var(--text-color)] /* цвет рамки по умолчанию */ rounded-md px-3 py-2 text-[var(--text-color)] /* цвет вводимого текста */ text-base placeholder:text-[var(--hint-color)] /* цвет плейсхолдера */ focus:outline-none focus:ring-2 focus:ring-[var(--current-color)] /* кольцо фокуса */ focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
+                class="w-24 ml-3 bg-transparent border border-[var(--text-color)] rounded-md px-3 py-2 text-[var(--text-color)] /* цвет вводимого текста */ text-base placeholder:text-[var(--hint-color)] /* цвет плейсхолдера */ focus:outline-none focus:ring-2 focus:ring-[var(--current-color)] /* кольцо фокуса */ focus:border-[var(--text-color)] /* рамка при фокусе */ transition"
               />
             </div>
           </div>
@@ -410,7 +410,28 @@
           </div>
         </div>
       </div>
-    </div>
+
+            <!-- 4) Загрузка... -->
+      <div
+        id="loadingContainer"
+        class="sheet-view px-4 mt-4"
+        data-view="loading"
+        hidden
+      >
+        <div id="loadingSnippet">
+          <div class="mb-2">
+            <!-- заголовок -->
+            <span
+              class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
+            >
+              Загрузка...
+            </span>
+          </div>
+         
+            </div>
+          </div>
+        </div>
+      
 
     <!-- Скрипт ES Modules -->
     <script type="module" src="js/main.js"></script>
@@ -504,7 +525,7 @@
           случайная.
         </p>
         <p>
-          <span class="font-bold text-[var(--text-color)]">Квантовая</span>
+          <span class="font-bold text-[var(--text-color)]">Квантовый</span>
           — мы подключаемся к
           <a
             href="https://quantumnumbers.anu.edu.au/"
@@ -518,28 +539,20 @@
     </div>
   </template>
 
-  <!-- Шаблон для «API-ключ» -->
-  <template id="tmpl-apiKey">
-    <div class="space-y-4">
+    <!-- Шаблон для «Ошибка» -->
+  <template id="tmpl-QRNGError">
+    <div class="space-y-3">
       <span
-        class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-3"
+        class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
       >
-        API
+        Ошибка
       </span>
-      <div class="font-medium text-base text-[var(--text-color)]">
+      <div class="font-medium text-base text-[var(--text-color)] space-y-1">
         <p>
-          Мы подключаемся к
-          <a
-            href="https://quantumnumbers.anu.edu.au/"
-            class="text-[var(--current-color)] underline"
-            target="_blank"
-          >
-            ANU Quantum Numbers </a
-          >, чтобы получить настоящие квантовые числа. Без ключа вы не сможете
-          делать запросы.
+Во время запроса к API произошла ошибка. Проверьте ключ.
         </p>
-        <p>Получите свой ключ в личном кабинете и вставьте его в поле «API».</p>
       </div>
     </div>
   </template>
+
 </html>

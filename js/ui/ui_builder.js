@@ -27,6 +27,7 @@ import {
   adjustPanelHeight,
   showMain,
   showSummary,
+  showLoading,
 } from "./bottomSheet_controls.js";
 
 import { goToMyLocation } from "./map_controls.js";
@@ -48,10 +49,10 @@ export function setupUI() {
 
   // Валидация формы
   const apiInput = document.getElementById("apiKey");
-  const purposeInput = document.getElementById("purpose");
   const createBtn = document.getElementById("createPointBtn");
   const newPointBtn = document.getElementById("newPointBtn");
   validateCreateBtn();
+  apiInput.addEventListener("input", validateCreateBtn);
 
   // Кнопка создания точки
   createBtn.onclick = onCreatePoint;
