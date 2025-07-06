@@ -472,8 +472,7 @@
       Цель
     </span>
     <span class="font-medium text-base text-[var(--text-color)]">
-      Опишите намерение или вопрос, который будете исследовать на прогулке:
-      слово, фразу или идею, отражающую ваше внутреннее состояние или запрос.
+      Сформулируйте намерение или вопрос, с которым вы отправляетесь на прогулку. Это может быть слово, фраза или тема, отражающая ваш внутренний настрой.
     </span>
   </template>
 
@@ -485,24 +484,24 @@
       >
         Типы точек
       </span>
-      <div class="font-medium text-base text-[var(--text-color)] space-y-1">
+      <div class="font-medium text-base text-[var(--text-color)] space-y-3">
         <p>
           <span class="font-bold text-[var(--random-button-select)]"
             >Случайная</span
           >
-          — полностью рандомная локация
+          — полностью случайное место на карте. Ничто не влияет на его расположение.
         </p>
         <p>
           <span class="font-bold text-[var(--attractor-button-select)]"
             >Аттрактор</span
           >
-          — зона повышенной «интенсивности» событий
+          — точка в области, где плотность случайных событий выше обычного. Считается, что такие места могут быть «заряжены смыслом».
         </p>
         <p>
           <span class="font-bold text-[var(--void-button-select)]"
             >Пустота</span
           >
-          — места с малой «концентрацией» событий
+          — точка в области, где плотность случайных событий ниже обычного. Это место с минимальной активностью.
         </p>
       </div>
     </div>
@@ -516,24 +515,23 @@
       >
         Способ генерации
       </span>
-      <div class="font-medium text-base text-[var(--text-color)] space-y-1">
+      <div class="font-medium text-base text-[var(--text-color)] space-y-4">
         <p>
           <span class="font-bold text-[var(--text-color)]"
             >Псевдо-случайный</span
           >
-          — случайная генерация, основывающаяся на энтропии. Не истинно
-          случайная.
+          — точки размещаются случайным образом с помощью алгоритма, который имитирует случайность.
         </p>
         <p>
           <span class="font-bold text-[var(--text-color)]">Квантовый</span>
-          — мы подключаемся к
+          — точки размещаются на основе настоящих случайных чисел, полученных из квантового источника. Для работы этого режима нужен API-ключ с сайта 
           <a
             href="https://quantumnumbers.anu.edu.au/"
             class="text-[var(--current-color)] underline"
             target="_blank"
           >
             ANU Quantum Numbers </a
-          >, чтобы получить настоящие квантовые числа.
+          >
         </p>
       </div>
     </div>
@@ -545,11 +543,11 @@
       <span
         class="font-bold text-xl text-[var(--text-color)] leading-tight block mb-1"
       >
-        Ошибка
+        Ошибка при подключении к API
       </span>
       <div class="font-medium text-base text-[var(--text-color)] space-y-1">
         <p>
-Во время запроса к API произошла ошибка. Проверьте ключ.
+Мы не смогли запустить квантовый режим. Проверьте, пожалуйста, корректность API-ключа.
         </p>
       </div>
     </div>
